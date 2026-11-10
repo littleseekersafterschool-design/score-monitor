@@ -117,10 +117,10 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
  const sid=selection==='free'?null:selection;
  const gs=db.groups.filter(g=>g.sid===sid&&groupCount(g.id)>0);
  const ideas=db.ideas.filter(i=>i.sid===sid&&i.status==='approved');
- text=`<div class="field"><label>編集するアンケート・発意</label><select id="src">${sources.map(x=>`<option value="${x.id}" ${selection===x.id?'selected':''}>${safe(x.label)}</option>`).join('')}</select></div><div class="mini">同じ問いの中で、複数のバブルを1つにまとめられます。まとめた結果はボードに即時反映されます。</div>`
- +gs.map(g=>`<div class="entry"><div><b>${safe(g.name)}　♥ ${g.likes}</b><div class="mini">発意 ${groupCount(g.id)}件</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn small" data-act="rename" data-id="${g.id}">名前変更</button>${gs.length>1?`<button class="btn primary small" data-act="attachHere" data-id="${g.id}">ここにまとめる</button>`:''}</div></div>`).join('')
- +`<div style="font-size:12px;font-weight:800;margin-top:18px">個別の発意をまとめる</div>`
- +ideas.map(i=>`<div class="entry"><div class="grow"><div class="entry-name">${safe(i.text)}</div><div class="mini">現在：${safe(group(i.gid)?.name||'未分類')}</div></div><button class="btn small" data-act="attachIdea" data-id="${i.id}">同じグループにする</button></div>`).join('')
+ text=`<div class="field"><label>編集するアンケート・発意</label><select id="src">${sources.map(x=>`<option value="${x.id}" ${selection===x.id?'selected':''}>${safe(x.label)}</option>`).join('')}</select></div><div class="mini">丸はそれぞれ独立したまま、関連するものを同じ「島」で囲みます。いいね数と元の発意はそのまま残ります。</div>`
+ +gs.map(g=>`<div class="entry"><div><b>${safe(g.name)}　♥ ${g.likes}</b><div class="mini">発意 ${groupCount(g.id)}件 ${islandFor(g.id)?'／ 関連する島に所属':''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn small" data-act="rename" data-id="${g.id}">名前変更</button>${gs.length>1?`<button class="btn primary small" data-act="attachHere" data-id="${g.id}">ここにまとめる</button>`:''}${islandFor(g.id)?`<button class="btn small" data-act="unlinkIsland" data-id="${g.id}">島から外す</button>`:''}${groupCount(g.id)>1?`<button class="btn small" data-act="chooseSplit" data-id="${g.id}">別バブルに分ける</button>`:''}</div></div>`).join('')
+ +`<div style="font-size:12px;font-weight:800;margin-top:18px">個別の発意を関連付ける</div>`
+ +ideas.map(i=>`<div class="entry"><div class="grow"><div class="entry-name">${safe(i.text)}</div><div class="mini">所属バブル：${safe(group(i.gid)?.name||'未分類')}</div></div><button class="btn small" data-act="attachIdea" data-id="${i.id}">同じ島にする</button></div>`).join('')
  }
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
@@ -133,30 +133,43 @@ function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='
 if(a==='create'){popup(`<h3>みんなに問いかける</h3><div class="field"><label>アンケートの問い</label><input id="questionText" maxlength="120" placeholder="例：次のイベントは何をしたい？"></div><div class="two"><div class="field"><label>公開開始日</label><input id="qStart" type="date" value="${day(0)}"></div><div class="field"><label>公開終了日</label><input id="qEnd" type="date" value="${day(7)}"></div></div><div class="actions"><button class="btn primary" type="button" data-act="postQuestion">問いを投稿する</button></div>`);return}
 if(a==='postIdea'){let t=$('#ideaText')?.value.trim();if(!t){$('#ideaText')?.focus();return}let hits=findNG(t),i={id:'i'+(++seq),sid:id||null,gid:null,text:t,status:hits.length?'pending':'approved',authorId:'demo-child',ngHits:hits};db.ideas.push(i);if(!hits.length)publishIdea(i);complete(false,hits.length>0);return}
 if(a==='postQuestion'){let t=$('#questionText')?.value.trim(),st=$('#qStart')?.value,en=$('#qEnd')?.value;if(!t){$('#questionText')?.focus();return}if(!st||!en||en<st){alert('公開期間を確認してください');return}let num=db.surveys.length;let hits=findNG(t);db.surveys.push({id:'s'+(++seq),label:num<26?String.fromCharCode(65+num):String(num+1),text:t,start:st,end:en,status:hits.length?'pending':'active',ngHits:hits});complete(true,hits.length>0);return}
-if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="actions">${role==='staff'?`<button class="btn" data-act="attachHere" data-id="${id}">別のグループをここにまとめる</button>`:''}<button class="btn primary" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
+if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="actions">${role==='staff'?`<button class="btn" data-act="attachHere" data-id="${id}">別のバブルをこの島にくっつける</button>`:''}<button class="btn primary" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
 
 if(a==='attachHere'){
  let g=group(id);if(!g)return;
  let options=db.groups.filter(x=>x.id!==g.id&&x.sid===g.sid&&groupCount(x.id)>0);
- popup(`<h3>「${safe(g.name)}」にまとめる</h3><div class="muted">まとめたいバブルを選んでください。元の発意は消さず、1つのバブルとして表示します。</div>${options.length?`<div class="field"><label>このグループにくっつける発意グループ</label><select id="mergeSource">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件・♥ ${x.likes}）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmMerge" data-id="${g.id}">同じグループにする</button></div>`:'<div class="notice">同じアンケート内に、まだ他のグループがありません。</div>'}`);
+ popup(`<h3>「${safe(g.name)}」と同じ島にする</h3><div class="muted">2つのバブルは1つに統合されず、それぞれ別の丸のまま同じ島に並びます。いいね数も個別に残ります。</div>${options.length?`<div class="field"><label>同じ島にするバブル</label><select id="mergeSource">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件・♥ ${x.likes}）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmMerge" data-id="${g.id}">同じグループにする</button></div>`:'<div class="notice">同じアンケート内に、まだ他のグループがありません。</div>'}`);
  return;
 }
 if(a==='confirmMerge'){
  let from=$('#mergeSource')?.value;
- if(mergeGroups(from,id)){close();view='board';render()}
+ if(addToIsland(from,id)){close();view='board';render()}
  return;
 }
 if(a==='attachIdea'){
  let idea=db.ideas.find(x=>x.id===id),from=group(idea?.gid);
  if(!idea)return;
  let options=db.groups.filter(g=>g.sid===idea.sid&&g.id!==idea.gid&&groupCount(g.id)>0);
- popup(`<h3>同じグループにする</h3><div class="notice">「${safe(idea.text)}」</div><div class="muted" style="margin-top:9px">移動後も元の発意文と投稿者の記録は残ります。</div>${options.length?`<div class="field"><label>くっつける先のグループ</label><select id="attachTarget">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmAttachIdea" data-id="${id}">このグループにする</button></div>`:'<div class="notice">同じアンケート内に、移動できる別グループがありません。</div>'}`);
+ popup(`<h3>同じグループにする</h3><div class="notice">「${safe(idea.text)}」</div><div class="muted" style="margin-top:9px">元の文章とバブルは移動・統合せず、関連する丸として近くに置きます。</div>${options.length?`<div class="field"><label>関連させる先のバブル</label><select id="attachTarget">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmAttachIdea" data-id="${id}">このグループにする</button></div>`:'<div class="notice">同じアンケート内に、移動できる別グループがありません。</div>'}`);
  return;
 }
 if(a==='confirmAttachIdea'){
  let target=$('#attachTarget')?.value;
- if(moveIdea(id,target)){close();view='board';render()}
+ let idea=db.ideas.find(i=>i.id===id);if(idea&&addToIsland(idea.gid,target)){close();view='board';render()}
  return;
+}
+
+if(a==='unlinkIsland'){if(removeFromIsland(id)){view='board';render()}return}
+if(a==='chooseSplit'){
+let g=group(id);if(!g)return;
+let ideas=db.ideas.filter(i=>i.gid===id&&i.status==='approved');
+popup(`<h3>別のバブルに分ける</h3><div class="muted">以前に1つの丸へまとめた回答を分け直すことができます。ただし当時のいいねの配分は復元できません。</div><div class="field"><label>別バブルに戻す発意</label><select id="splitTarget">${ideas.map(i=>`<option value="${i.id}">${safe(i.text)}</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmSplit">分ける</button></div>`);
+return;
+}
+if(a==='confirmSplit'){
+let ideaId=$('#splitTarget')?.value;
+if(ideaId&&splitIdea(ideaId)){close();view='board';render()}
+return;
 }
 if(a==='like'){let g=group(id);if(!g)return;g.likes+=liked.has(id)?-1:1;liked.has(id)?liked.delete(id):liked.add(id);render();act('detail',id);return}
 if(a==='approveSurvey'){let q=survey(id);if(q){q.status='active';if(q.start>day(0))q.start=day(0);if(q.end<day(0))q.end=day(7)}render();return}
