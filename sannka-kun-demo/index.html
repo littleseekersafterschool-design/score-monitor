@@ -128,7 +128,7 @@ const originalDemoData=JSON.parse(JSON.stringify(db));
 try{
  const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
  if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
-  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;
+  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;db.powerMissionVersion=old.powerMissionVersion;
   const nums=[...db.surveys,...db.groups,...db.ideas,...db.islands,...(db.cubes||[]),...(db.missions||[]),...db.pendingNames,...db.pendingIslandNames].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
   seq=Math.max(seq,...nums);
  }
@@ -342,6 +342,7 @@ function scanExistingText(){
 if(db.ngRulesVersion!==4){scanExistingText();cubeSanitizeExisting();db.ngRulesVersion=4;saveDemo();}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
 let revealCubeIds=new Set();
+const pendingBoardReveals=new Set();
 function bubble(g){
  let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
  let cubes=cubeAttached(g.id);
@@ -366,17 +367,20 @@ function board(){
  let qs=db.surveys.filter(active),revealMissions=[];
  revealCubeIds=new Set();
  if(role==='child'&&typeof window!=='undefined'){
-   revealMissions=db.missions.filter(m=>m.status==='results_sent'&&m.winners?.length&&!m.boardViewed?.[currentAccount]);
+   revealMissions=db.missions.filter(m=>m.status==='results_sent'&&m.winners?.length&&!m.boardViewed?.[currentAccount]&&!pendingBoardReveals.has(m.id+'|'+currentAccount));
    for(const m of revealMissions)for(const id of m.winners)if(cubeOf(id)&&['popped','progress','done'].includes(cubeOf(id).status))revealCubeIds.add(id);
  }
  const hasReveal=revealCubeIds.size>0,ids=[...revealCubeIds];
  $('#view').innerHTML=`<div class="map"><div class="pop-board-note" id="popBoardNote" hidden aria-live="polite">🎉 POP! キューブが「みんなのプロジェクト」に進化したよ！</div>${qs.map(zone).join('')}${zone(null)}</div>
  <div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube → 🔺 みんなのプロジェクト</span></div>`;
  if(hasReveal){
-  for(const m of revealMissions){m.boardViewed=m.boardViewed||{};m.boardViewed[currentAccount]=true;}
-  saveDemo();
-  if(typeof window.setTimeout==='function')window.setTimeout(()=>{
-   if(view!=='board'||role!=='child')return;
+  const accountAtReveal=currentAccount;
+  for(const m of revealMissions)pendingBoardReveals.add(m.id+'|'+accountAtReveal);
+  const morph=()=>{
+   if(view!=='board'||role!=='child'||currentAccount!==accountAtReveal){
+    for(const m of revealMissions)pendingBoardReveals.delete(m.id+'|'+accountAtReveal);
+    return;
+   }
    for(const id of ids){
     const node=root.querySelector('[data-act="cubeDetail"][data-id="'+id+'"]');
     const c=cubeOf(id);
@@ -385,8 +389,15 @@ function board(){
     node.innerHTML='▲ <small>♥ '+(c.likes||0)+'</small>';
    }
    const notice=$('#popBoardNote');
-   if(notice){notice.hidden=false;window.setTimeout(()=>{notice.hidden=true},3000)}
-  },350);
+   if(notice){notice.hidden=false;if(typeof window.setTimeout==='function')window.setTimeout(()=>{notice.hidden=true},3000)}
+   for(const m of revealMissions){
+    m.boardViewed=m.boardViewed||{};m.boardViewed[accountAtReveal]=true;
+    pendingBoardReveals.delete(m.id+'|'+accountAtReveal);
+   }
+   saveDemo();
+  };
+  if(typeof window.setTimeout==='function')window.setTimeout(morph,350);
+  else morph();
  }
  revealCubeIds=new Set();
 }
