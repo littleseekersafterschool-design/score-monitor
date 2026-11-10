@@ -70,6 +70,34 @@
 @keyframes skConfetti{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}12%{opacity:1}100%{opacity:0;transform:translate(var(--px),var(--py)) rotate(var(--spin,120deg)) scale(1.05)}}
 @media(prefers-reduced-motion:reduce){#sk4 .bubble,#sk4 .bubble.sk-react,#sk4 .cube-mini.sk-react,#sk4 .pop-scene,#sk4 .pop-scene .big-pop,#sk4 .sk-confetti,#sk4 .sk-float-heart{animation:none !important;transition:none !important}#sk4 .sk-confetti,#sk4 .sk-float-heart{display:none}}
 
+
+/* Power to Pop はボードではなくアカウントへのメール型通知 */
+#sk4 .user-select{font-size:11px;font-weight:800;padding:7px 10px;border-radius:10px;border:1px solid #a9d7e9;background:white;color:#1d607f;max-width:165px}
+#sk4 .inbox-count{display:inline-grid;place-items:center;min-width:20px;height:20px;border-radius:12px;padding:0 4px;background:#ef5d77;color:white;font-size:10px;font-weight:900}
+#sk4 .mail-grid{display:grid;gap:11px}
+#sk4 .mail-item{display:flex;width:100%;align-items:center;gap:13px;text-align:left;padding:15px 14px;border:1px solid #cfe2ef;background:#fff;border-radius:13px;color:#204e67}
+#sk4 .mail-item.unread{background:linear-gradient(110deg,#effaff,#fff);border-color:#70bddd;box-shadow:0 3px 15px #45a4d71f}
+#sk4 .mail-item:hover{border-color:#339ccc;transform:translateY(-1px)}
+#sk4 .mail-envelope{font-size:26px;flex:none}
+#sk4 .mail-subject{font-size:14px;font-weight:850;color:#175d8b}
+#sk4 .mail-preview{font-size:11px;color:#6c8490;line-height:1.65}
+#sk4 .vote-choice{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #d6e8f1;border-radius:11px;margin:8px 0;background:white;cursor:pointer}
+#sk4 .vote-choice:has(input:checked){border-color:#57a7d6;background:#eaf7ff}
+#sk4 .vote-choice input{width:19px;height:19px;accent-color:#1289c3;flex:none}
+#sk4 .vote-choice b{font-size:13px}
+#sk4 .vote-stats{border-radius:12px;background:#ebf7ff;padding:12px;margin:10px 0;color:#176281;font-size:12px;font-weight:750}
+#sk4 .rank-row{display:flex;justify-content:space-between;align-items:center;gap:9px;padding:10px;border:1px solid #dae8f0;border-radius:10px;margin:7px 0;background:white}
+#sk4 .rank-row b{font-size:13px}
+#sk4 .result-badge{background:#def8ef;color:#0c7857;font-weight:850;border-radius:99px;padding:3px 9px;font-size:10px}
+#sk4 .result-podium{display:flex;align-items:center;gap:12px;border:1px solid #a9d8eb;border-radius:13px;background:linear-gradient(130deg,#f0fbff,#e7f9f4);padding:12px;margin-top:10px}
+#sk4 .triangle-symbol{display:grid;place-items:center;flex:none;width:64px;height:60px;clip-path:polygon(50% 1%,99% 94%,1% 94%);background:linear-gradient(150deg,#00a5eb,#307bc9,#ffcf64);color:#fff;font-weight:950;text-shadow:0 1px 4px #075e90}
+#sk4 .cube-mini.project{clip-path:polygon(50% 0%,98% 94%,2% 94%);border-radius:0;border:none;background:linear-gradient(155deg,#0c9dd7,#2073d4,#ffd267);color:#fff;box-shadow:none}
+#sk4 .cube-mini.project small{color:#fff}
+#sk4 .square-to-triangle{margin:0 auto;display:grid;place-items:center;width:92px;height:92px;border-radius:16px;background:linear-gradient(150deg,#85d4ff,#297bc6);font-size:30px;color:white;font-weight:950;animation:skMorph 1.45s cubic-bezier(.22,1,.28,1) forwards}
+#sk4 .result-scene{text-align:center;border:1px solid #a9d9ea;border-radius:17px;padding:23px 12px;background:radial-gradient(circle,#fff,#d6efff);position:relative;overflow:hidden}
+#sk4 .result-scene h3{margin:13px auto 7px;color:#1d6495}
+@keyframes skMorph{0%{border-radius:15px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);transform:scale(.85) rotate(-8deg)}50%{transform:scale(1.12) rotate(13deg)}100%{clip-path:polygon(50% 0%,100% 95%,0 95%);transform:scale(1) rotate(0);border-radius:0}}
+@media(prefers-reduced-motion:reduce){#sk4 .square-to-triangle{animation:none;clip-path:polygon(50% 0%,100% 95%,0 95%)}}
 </style>
 <div class="app"><header><div class="brand-row"><img class="brand-avatar" src="data:image/webp;base64,UklGRr4HAABXRUJQVlA4WAoAAAAQAAAALwAALQAAQUxQSGcFAAABCQVtGznq+N3yJ/wgIvqfZy2388oTMwHZAGRiifgYAoGk/c0niIjUwSCSFDncVcW/iTh8d2EINiImICzctm1Mkr2jfc693xeR5ap2P9u2bdu2bdu2bbZt27aVVkR89569H7KiEBETcG4vAC11vS6gGiMb1YBq9c48ojQmDXoA5apu6SEAihSZhNoNGAFSMqMnQ0RT8l0viTYxsgt+kddLgIICdF2JkBgRHFWGohChDz6m/B49VSKBhjKwHUZErbWKiVjWQv/mu+LGEjUi19s8Xrc9bXnoOcnFFzB+YVmqShdyCwxs5rnvftbXPvLQBRLq9GRgD956sFSSg0BqRRACo4JehcqF17xitSffrVnVgD75bNj+Mfmo983u53INQwuwUWASGIGlO707zKDARY1Md7obL17Y/S4vxgOOv7RX8UBJJVmjRQAknR/YBAcgv+CCdcvTm+6LH1zwiycDV56109DbyghFkGUkYy1laT8TVpTtMau22e3yHz/hZ7f107988QbIuqRiBtWIoGpdc/i1zs0tHd665i9f+P2duq/uuasNRkquEBBBGYnA4ADD5uVH3jiRG8w80b951lxp+hNVpUYNVoI0BO3ggWlzAP491y7V9f1D0n3KLdb97fA+QjJTQZUzlKb3MGJM+kU/bdnzqRf+HgCGzxlaEEGEURY1Sgxd40D4zZm7lOXFt70BkO315SYyAUPAKHmee7IR49nyt6J2/Y27zN+oOBvJijyRwRo1ouq1hi1gOnSP9VA3l5uoKdEgkComs8iL7wLHkOiOePKDpoVmw2r3tqHVFJQCSeF55rFgXklUBnDTTknvnShiyASDWApAGBtUwxtkACAiAzx7vyOvuvsMbvuyYlZjFF7hZjRYTpRh9qVgAunJMXfCgUecPUQTB1m8dOOAztwIVg0yOJgq2bxYYnbHNcfue9oVQr+hLQ4Qq99ZEJDgIuAywIHVU69C7QGXHLTvNYBNeFhkDFbB+YSHLDiNhFyWRMlrWrzdE9metefBHdBfIxeFBA2ugQHvmggEraOpgQRDpLl3QMd+Am2b2Sl5aUcdkXQhzOP2L51v4BSKE3Sjce5xG0p7SH/90G7+2Uu+HADqLb+89MXLCwTnq26/IJODgomA4G8AcMezo9f97BV45e/7zsHnPo5PfMkAmNa8vZpAa9AEc0WaegOizxf77/v1sx/qXrCfJ08v/nF55T8v6lxI8ZjHLzpSclDJzMotHqwE6Is/nnY88bpje6Kqnjw4KWYHBsD07jV0gwBUWJp/JyLB47ave22uzB87cZ9evGP1V5G6jP933uwNs4pK0shm7qEPjBZAilc9/5+r021OX35Xd793Xna/SEsl/R+cL7zTkrt5YWNMb8PKhkufMMvl13xrArjkzYenrOuuggCYJt7nEkjUZv4F66JZwSP97lVtGt3x6asn/z6Z0dbZ+RWQ4qFPmDM2Tg5u9zglrOyqf5Uhn/f96w1WPP5Aw4qmd+6kDEd/8s2gb8aULzt1bbZmVXaZxWKYVnLu/qpZVaabntVjxpjCITepo0uqcMeYzpfcsyak1S/A+DLuUeQIGChoDEP/fV1w5s2IZizIzz2hp1aOii30eMBjFpz3kmMLiYPm+yCMWwLo2T1sDGFLZWXPyBgKW2xY75qevX34FoDpnMXdW9iWhZ069OEtv9onNB6UR9fdWmFbYj7z4km2C7d/+22wnZ791XOark1T7T2zG83DKCApshXPhEyCEya4QjPHcF3JHScwj0AxrwRlopsHUwFS0FNF6iRLRatE96AgN4oEcwcBLsk8ags6oTAyaB5GURBrklkNrwol0picznCDZKIpJJVGZhEAVlA4IDACAAAQDQCdASowAC4APsVOoUunpCMhsdmd+PAYiWwAnTKEgCyO6Z/ZcWfqgeoDbF+YDzkvRt5zPUnegB0tKNBCLayMDo5k8dQm1VliiJf53w0oMRmZNOfAaTFYa82GokoZCPxRBPokFhxfj6WpK+NaHGnTAAD+/ntkuEyXv/1tdvfvFeP4nNWd1XAKTPCfW9+ua+eC/4g7eLam14ulvbPwaBe3TT3+fK7YrGkwwBOOuwn7yj0DUxa4Ui7f7VfzrVvT/eSkshpM6CpEh1qM15BK1bquY2EIgzja+fw4on06h5VbzQMRwcamfYIXFobguYovtU8MaUK+raMNGi8kULlWGBQjFDR4NIaloIYnrrHxLsieHYMlC2auW6s3ThyIBSuUU+Mu04zSnq8bgFlAdgkHj9gr3XBKsGPJNHOEEF2o4Wd9wh7gL6JnPTt8echoYmJHmGotKqu0a9q/AFkIuMnOmBsVE83XLVBYqzgc5Hdx3r1MUUcPZZDWJ0uuSD8B8OtEARtd229cC0Gnq7alvWXOWr7+eWDK1RJxzXoT/QWu3cB8yh+JdKFSgiFMyQKY8jI30pQMOZIq7O7WYwFPdXFHO2XyceUrOxYsOdzdNGJ2RB/+GCQWh24KC4dmvNbwPh6E7LY4mCWl0g7bsz/X6kJxUfHjYmlC8bQuALK0wyjVPRgDTCDjwMolL0mqWyrpXToG74AZ+b3C5/My//yGfzjbbutAj5wj7ydjL2/eBe8w4gAAAA==" alt="さんかくんのキャラクターロゴ"><div><div class="brand">SANNKA-KUN! · BUBBLE WORLD</div><h2>みんなの発意ボード 🫧</h2><div class="muted">Little.Seekers｜Bubble 操作モック</div></div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
@@ -87,7 +115,7 @@ const originalDemoData=JSON.parse(JSON.stringify(db));
 try{
  const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
  if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
-  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];
+  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.missions=Array.isArray(old.missions)?old.missions:undefined;
   const nums=[...db.surveys,...db.groups,...db.ideas].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
   seq=Math.max(seq,...nums);
  }
@@ -153,21 +181,47 @@ if(!Array.isArray(db.cubes)){
  {id:'cube-sample-b',gid:'g7',title:'水槽の生き物を育てよう',why:'生き物のことを学びたい',how:'育てたい魚を相談し、当番を決める',support:'道具と飼い方の相談',status:'proposed',likes:4,myLiked:false,powers:0,myPowered:false,goal:6,deadline:'2099-12-31',tasks:'',createdBy:'demo-child'}
  ].filter(c=>db.groups.some(g=>g.id===c.gid));
 }
+
+/* Migration: old cube status=mission belonged to visible board voting.
+   In the new design, voting exists ONLY inside the user's inbox. */
+if(db.popMailVersion!==1){
+ for(const c of db.cubes){if(c.status==='mission')c.status='proposed';}
+ db.popMailVersion=1;
+}
+if(!Array.isArray(db.missions)){
+ const candidates=db.cubes.filter(c=>c.status==='proposed').map(c=>c.id).slice(0,4);
+ db.missions=candidates.length>=1?[{
+  id:'mission-sample',subject:'Power to Pop Mission!',title:'みんなのプロジェクトを選ぼう！',
+  candidates,perUserVotes:1,winnerCount:1,deadline:'2099-12-31',status:'open',
+  ballots:{},opened:{},resultOpened:{},winners:[],createdAt:'2026-11-11',publishedAt:null
+ }]:[];
+}
+const demoAccounts=[{id:'demo-child-01',name:'あおい（3年）'},{id:'demo-child-02',name:'はる（4年）'},{id:'demo-child-03',name:'みお（2年）'}];
+let currentAccount='demo-child-01';
+try{const oldId=localStorage.getItem('sannka_current_account_v1');if(demoAccounts.some(x=>x.id===oldId))currentAccount=oldId;}catch(e){}
+function saveAccount(){try{localStorage.setItem('sannka_current_account_v1',currentAccount)}catch(e){}}
+function activeMission(id){return db.missions.find(x=>x.id===id)}
+function nomineeCount(m,cubeId){return Object.values(m.ballots||{}).reduce((n,choices)=>n+(Array.isArray(choices)&&choices.includes(cubeId)?1:0),0)}
+function missionCandidates(m){return m.candidates.map(id=>cubeOf(id)).filter(c=>c&&c.status!=='hidden'&&c.status!=='rejected')}
+function missionRanking(m){return missionCandidates(m).map(c=>({...c,votes:nomineeCount(m,c.id)})).sort((a,b)=>b.votes-a.votes||m.candidates.indexOf(a.id)-m.candidates.indexOf(b.id))}
+function inboxItems(){return [...db.missions].reverse().flatMap(m=>{
+ let msgs=[];
+ if(m.status==='results_sent')msgs.push({id:m.id,type:'result',read:!!m.resultOpened?.[currentAccount]});
+ msgs.push({id:m.id,type:'invitation',read:!!m.opened?.[currentAccount]});
+ return msgs;
+})}
+function unreadCount(){return inboxItems().filter(x=>!x.read).length}
+function messageTitle(m,type){return type==='result'?'🎉 POP! Congrats!｜結果が届いたよ！':(m.subject||'⚡ Power to Pop Mission!')}
 function cubeOf(id){return db.cubes.find(c=>c.id===id)}
-function cubeStatus(c){return ({proposed:'企画アイデア',mission:'ミッション中',popped:'POP！実行待ち',progress:'実行中',done:'実行完了',pending:'職員の確認待ち',hidden:'非表示',rejected:'非公開'})[c.status]||c.status}
+function cubeStatus(c){return ({proposed:'企画アイデア',popped:'認定プロジェクト',progress:'実行中',done:'実行完了',pending:'職員の確認待ち',hidden:'非表示',rejected:'非公開'})[c.status]||c.status}
 function visibleCubes(gid){return db.cubes.filter(c=>c.gid===gid&&['proposed','mission','popped','progress','done'].includes(c.status))}
-function cubeAttached(gid){return visibleCubes(gid).sort((a,b)=>(a.status==='mission'?-2:a.status==='popped'?-1:0)-(b.status==='mission'?-2:b.status==='popped'?-1:0))}
+function cubeAttached(gid){return visibleCubes(gid).sort((a,b)=>(['popped','progress','done'].includes(a.status)?-1:0)-(['popped','progress','done'].includes(b.status)?-1:0))}
 function meter(c){let percent=Math.min(100,Math.round(100*(c.powers||0)/Math.max(1,c.goal||6)));return `<div class="meter" aria-label="投票の達成度 ${percent}%"><span style="width:${percent}%"></span></div><div class="inline-info">⚡ ${c.powers||0} / ${c.goal||6} パワー　（${percent}%）</div>`}
 function cubeBlock(c){
- const g=group(c.gid),canVote=c.status==='mission';
- return `<div class="cube-card"><div class="cube-head"><div class="cube-title"><span class="cube-mark">▣</span> ${safe(c.title)}</div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div><div class="mini">元のバブル：${safe(g?.name||'不明')}</div><div class="inline-info" style="margin-top:6px">💜 ${c.likes||0} いいね！</div>${canVote?meter(c):''}<div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">キューブを見る</button>${canVote?`<button class="btn primary small" data-act="power" data-id="${safe(c.id)}" ${c.myPowered?'disabled':''}>${c.myPowered?'⚡ 送信済み':'⚡ パワーを送る！'}</button>`:''}</div></div>`;
+ const g=group(c.gid),recognized=['popped','progress','done'].includes(c.status);
+ return `<div class="cube-card"><div class="cube-head"><div class="cube-title">${recognized?'🔺':'🧊'} ${safe(c.title)}</div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div><div class="mini">元のバブル：${safe(g?.name||'不明')}</div><div class="inline-info" style="margin-top:6px">💜 ${c.likes||0} いいね！</div><div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">${recognized?'プロジェクトを見る':'キューブを見る'}</button></div></div>`;
 }
 function cubeFormCheck(values){return [...new Set(values.flatMap(x=>findNG(x||'')))]}
-function missionBanner(){
- const activeM=db.cubes.filter(c=>c.status==='mission'&&group(c.gid)&&(!group(c.gid).sid||active(survey(group(c.gid).sid)||{})));
- if(!activeM.length)return '';
- return `<div class="mission-banner"><b>📣 Bubble Pop Mission!</b><div class="inline-info">みんなのパワーで、企画をプロジェクトへ！</div><div class="mission-items">${activeM.map(c=>`<button class="mission-entry" data-act="cubeDetail" data-id="${safe(c.id)}"><b>🧊 ${safe(c.title)}</b><span>⚡ ${c.powers||0} / ${c.goal||6}　パワー</span></button>`).join('')}</div></div>`;
-}
 function cubeSanitizeExisting(){
  for(const c of db.cubes){
   if(['proposed','mission','popped','progress','done'].includes(c.status)){
@@ -220,7 +274,7 @@ function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.s
 function bubble(g){
  let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
  let cubes=cubeAttached(g.id);
- return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6));return `<button class="cube-mini ${c.status==='mission'?'mission':['popped','progress','done'].includes(c.status)?'popped':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">▣ <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
+ return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6)),project=['popped','progress','done'].includes(c.status);return `<button class="cube-mini ${project?'project':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">${project?'▲':'▣'} <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
 }
 function zone(q){
 let id=q?q.id:null;
@@ -237,7 +291,7 @@ let unlinked=list.filter(g=>!used.has(g.id)).map(bubble).join('');
 let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';
 return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${islands}${unlinked}</div>`;
 }
-function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`${missionBanner()}<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube</span></div>`}
+function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube</span></div>`}
 function cubeListView(){
  const list=db.cubes.filter(c=>['proposed','mission','popped','progress','done'].includes(c.status));
  $('#view').innerHTML=`<div class="panel"><h3>🧊 Project Cube</h3><div class="inline-info">みんなの「やりたい」から生まれた具体的な企画です。発意・いいね・ミッションの投票は、それぞれ役割が異なります。</div>${list.map(cubeBlock).join('')||'<div class="empty">キューブはまだありません。発意のバブルを押して企画を提案してみよう！</div>'}</div>`;
