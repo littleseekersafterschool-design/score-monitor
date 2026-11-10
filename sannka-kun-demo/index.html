@@ -213,6 +213,7 @@ const demoAccounts=[{id:'demo-child-01',name:'あおい（3年）'},{id:'demo-ch
 let currentAccount='demo-child-01';
 try{const oldId=localStorage.getItem('sannka_current_account_v1');if(demoAccounts.some(x=>x.id===oldId))currentAccount=oldId;}catch(e){}
 function saveAccount(){try{localStorage.setItem('sannka_current_account_v1',currentAccount)}catch(e){}}
+const voteDrafts={};
 function activeMission(id){return db.missions.find(x=>x.id===id)}
 
 /* 施設から送る時点で、発意ボードにある公開済みの全キューブを対象とする */
