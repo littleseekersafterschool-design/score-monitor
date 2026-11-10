@@ -98,6 +98,12 @@
 #sk4 .result-scene h3{margin:13px auto 7px;color:#1d6495}
 @keyframes skMorph{0%{border-radius:15px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%);transform:scale(.85) rotate(-8deg)}50%{transform:scale(1.12) rotate(13deg)}100%{clip-path:polygon(50% 0%,100% 95%,0 95%);transform:scale(1) rotate(0);border-radius:0}}
 @media(prefers-reduced-motion:reduce){#sk4 .square-to-triangle{animation:none;clip-path:polygon(50% 0%,100% 95%,0 95%)}}
+
+#sk4 .vote-stepper{display:flex;align-items:center;gap:8px}
+#sk4 .vote-stepper b{font-size:18px;min-width:23px;text-align:center;color:#126a9f}
+#sk4 .vote-stepper button{width:34px;height:34px;padding:2px;display:inline-grid;place-items:center;border-radius:50%}
+#sk4 .vote-stepper button:disabled{opacity:.37;cursor:not-allowed}
+#sk4 .mail-vote-allocations{margin-top:10px}
 </style>
 <div class="app"><header><div class="brand-row"><img class="brand-avatar" src="data:image/webp;base64,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" alt="さんかくんのキャラクターロゴ"><div><div class="brand">SANNKA-KUN! · BUBBLE WORLD</div><h2>みんなの発意ボード 🫧</h2><div class="muted">Little.Seekers｜Bubble 操作モック</div></div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
@@ -365,16 +371,18 @@ text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワ�
 }
 
 if(tab==='cubes'){
- const recent=[...db.missions].reverse();
- const cubes=db.cubes.filter(c=>!['pending','rejected'].includes(c.status));
- text=`<div class="entry" style="margin-top:3px"><div><b>📣 Power to Pop Mission!｜施設から配信</b><div class="mini">ここで作成した投票はこどもの「おしらせ」に届きます。発意ボードには表示しません。</div></div><button class="btn primary" data-act="newMission">＋ ミッションを作成</button></div>`
- +recent.map(m=>`<div class="cube-card"><div class="cube-head"><div class="cube-title">📬 ${safe(m.title)}</div><span class="cube-status ${m.status==='results_sent'?'popped':'mission'}">${m.status==='open'?'投票受付中':m.status==='closed'?'集計・結果確認中':'結果送信済み'}</span></div>
- <div class="mini">1人 ${m.perUserVotes} 票まで ／ 認定する上位 ${m.winnerCount} 件 ／ 締切 ${safe(m.deadline)}</div>
- <div class="inline-info" style="margin-top:6px">投票した人数：${Object.keys(m.ballots||{}).length}人　・　候補：${m.candidates.length}件</div>
- <div class="actions">${m.status==='open'?`<button class="btn small" data-act="closeVoting" data-id="${safe(m.id)}">投票受付を終了</button>`:''}
- <button class="btn ${m.status==='results_sent'?'':'primary'} small" data-act="reviewMission" data-id="${safe(m.id)}">${m.status==='results_sent'?'送信済み結果を確認':'集計・結果を確認'}</button></div></div>`).join('')
- +`<div class="inline-info" style="margin-top:20px;font-weight:800">🧊 キューブから認定プロジェクトへ</div>`
- +cubes.map(c=>`<div class="entry"><div><b>${['popped','progress','done'].includes(c.status)?'🔺':'🧊'} ${safe(c.title)}</b><div class="mini">${safe(cubeStatus(c))}　・　💜 ${c.likes||0} いいね</div></div><div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容</button>${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了</button>`:''}${['popped','progress'].includes(c.status)?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援</button>`:''}</div></div>`).join('');
+ const recent=[...db.missions].reverse(),cubes=db.cubes.filter(c=>!['pending','rejected','hidden'].includes(c.status));
+ text=`<div class="entry"><div><b>📩 Power to Pop Mission!｜施設がアカウントへ送信</b><div class="mini">ボード内の公開中キューブがすべて投票対象。各自に配る票数、上位認定件数、締切を設定します。</div></div><button class="btn primary" data-act="newMission">＋ ミッションを送る</button></div>`
+ +recent.map(m=>{
+ const participants=Object.keys(m.ballots||{}).length,units=receivedVotes(m),complete=m.status==='results_sent';
+ const deadlineText=m.status==='open'?(m.deadline<day(0)?'期限終了':m.deadline===day(0)?'本日締切':'受付中'):'終了済み';
+ return `<div class="cube-card"><div class="cube-head"><div class="cube-title">✉ ${safe(m.title)}</div><span class="cube-status ${complete?'popped':'mission'}">${complete?'結果反映・配信済み':deadlineText}</span></div>
+ <div class="mini">全候補 ${m.candidates.length}件 ／ 1人 ${m.perUserVotes}票 ／ 上位 ${m.winnerCount}件認定 ／ 締切 ${safe(m.deadline)}</div>
+ <div class="vote-stats">投票ステータス：<b>${participants} / ${demoAccounts.length} 人</b>が投票済み　・　合計 <b>${units}票</b>が配分済み</div>
+ <div class="actions"><button class="btn small" data-act="reviewMission" data-id="${safe(m.id)}">📊 投票状況を見る</button>${!complete?`<button class="btn primary small" data-act="closeVoting" data-id="${safe(m.id)}">投票を終了して結果反映</button>`:`<span class="result-badge">認定 ${m.winners?.length||0}件</span>`}</div></div>`;
+ }).join('')
+ +`<div class="inline-info" style="margin-top:20px;font-weight:800">🧊 企画キューブと認定プロジェクト</div>`
+ +cubes.map(c=>`<div class="entry"><div><b>${['popped','progress','done'].includes(c.status)?'🔺':'🧊'} ${safe(c.title)}</b><div class="mini">${safe(cubeStatus(c))}　／　💜 ${c.likes||0} いいね</div></div><div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容を見る</button>${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了</button>`:''}${['popped','progress'].includes(c.status)?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援</button>`:''}</div></div>`).join('');
 }
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
@@ -402,6 +410,7 @@ function render(){
  $('#toolbar').innerHTML=view==='board'
  ?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`
  :`<button class="btn" data-act="board">← 発意ボードへ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;
+ settleExpiredMissions();
  if(view==='board')board();
  else if(view==='cubes')cubeListView();
  else if(view==='inbox')inboxView();
@@ -700,20 +709,12 @@ if(a==='saveName'){
 root.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a.dataset.id);return}const r=e.target.closest('[data-role]');if(r){role=r.dataset.role;view='board';close();render();return}const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;render();return}});
 root.addEventListener('change',e=>{
  if(e.target.id==='demoAccount'){const next=e.target.value;if(demoAccounts.some(x=>x.id===next)){currentAccount=next;saveAccount();close();render()}return}
- if(e.target.matches?.('[data-ballot-choice]')){
-  const m=db.missions.find(x=>x.status==='open'&&($('#dialog')?.innerHTML||'').includes('data-act="submitBallot"'));
-  if(!m)return;
-  const selected=[...root.querySelectorAll('[data-ballot-choice]:checked')];
-  if(selected.length>m.perUserVotes){e.target.checked=false;alert('このミッションでは1人'+m.perUserVotes+'票まで投票できます。')}
-  const count=root.querySelectorAll('[data-ballot-choice]:checked').length;
-  const help=$('#ballotCount');if(help)help.textContent='（残り'+Math.max(0,m.perUserVotes-count)+'票）';
-  return;
- }
  if(e.target.id==='src'){selection=e.target.value;render();return}
  if(e.target.dataset.move){let i=db.ideas.find(x=>x.id===e.target.dataset.move);if(i){i.gid=e.target.value;render()}}
 });
 root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 render();
+if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(()=>{if(settleExpiredMissions())render()},60000);
 })();
 </script>
 </div></body></html>
