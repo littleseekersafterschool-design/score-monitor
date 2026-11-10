@@ -630,8 +630,21 @@ if(a==='saveName'){
  }else{g.name=name;close();render()}
  return
 }}
-root.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a.dataset.id);return}const r=e.target.closest('[data-role]');if(r){role=r.dataset.role;render();return}const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;render();return}});
-root.addEventListener('change',e=>{if(e.target.id==='src'){selection=e.target.value;render();return}if(e.target.dataset.move){let i=db.ideas.find(x=>x.id===e.target.dataset.move);if(i){i.gid=e.target.value;render()}}});
+root.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a.dataset.id);return}const r=e.target.closest('[data-role]');if(r){role=r.dataset.role;view='board';close();render();return}const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;render();return}});
+root.addEventListener('change',e=>{
+ if(e.target.id==='demoAccount'){const next=e.target.value;if(demoAccounts.some(x=>x.id===next)){currentAccount=next;saveAccount();close();render()}return}
+ if(e.target.matches?.('[data-ballot-choice]')){
+  const m=db.missions.find(x=>x.status==='open'&&($('#dialog')?.innerHTML||'').includes('data-act="submitBallot"'));
+  if(!m)return;
+  const selected=[...root.querySelectorAll('[data-ballot-choice]:checked')];
+  if(selected.length>m.perUserVotes){e.target.checked=false;alert('このミッションでは1人'+m.perUserVotes+'票まで投票できます。')}
+  const count=root.querySelectorAll('[data-ballot-choice]:checked').length;
+  const help=$('#ballotCount');if(help)help.textContent='（残り'+Math.max(0,m.perUserVotes-count)+'票）';
+  return;
+ }
+ if(e.target.id==='src'){selection=e.target.value;render();return}
+ if(e.target.dataset.move){let i=db.ideas.find(x=>x.id===e.target.dataset.move);if(i){i.gid=e.target.value;render()}}
+});
 root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 render();
 })();
