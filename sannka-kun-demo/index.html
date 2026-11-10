@@ -12,8 +12,40 @@ let role='child',view='board',tab='pending',selection='a',seq=60;
 const day=n=>{let d=new Date();d.setDate(d.getDate()+n);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 const palette=[['#fff','#cfdbd7','#536a65','0〜4'],['#e6f5e5','#a6d7ac','#30643d','5〜9'],['#d8f0ec','#96d1c8','#226d63','10〜14'],['#dce9ff','#a3bde9','#29568e','15〜19'],['#ecddff','#bfa6e7','#62439a','20〜24'],['#ffe1b9','#edb479','#8b581c','25〜29'],['#ffbcae','#e48b77','#862d1e','30〜35+']];
 const color=n=>palette[n<=4?0:n<=9?1:n<=14?2:n<=19?3:n<=24?4:n<=29?5:6];
-const db={surveys:[{id:'a',label:'A',text:'次は何をして遊びたい？',start:'2020-01-01',end:'2099-12-31',status:'active'},{id:'b',label:'B',text:'みんなで何をつくりたい？',start:'2020-01-01',end:'2099-12-31',status:'active'}],groups:[{id:'g1',sid:'a',name:'サッカー',likes:12},{id:'g2',sid:'a',name:'ゲーム大会',likes:5},{id:'g3',sid:'a',name:'鬼ごっこ',likes:3},{id:'g4',sid:'b',name:'お菓子づくり',likes:9},{id:'g5',sid:'b',name:'工作',likes:6},{id:'g6',sid:null,name:'虫取り',likes:7},{id:'g7',sid:null,name:'魚を飼う',likes:18},{id:'g8',sid:null,name:'お祭り',likes:3}],ideas:[{id:'i1',sid:'a',gid:'g1',text:'サッカー大会がしたい',status:'approved'},{id:'i2',sid:'a',gid:'g1',text:'サッカーの試合をしたい',status:'approved'},{id:'i3',sid:'a',gid:'g2',text:'ゲーム大会がしたい',status:'approved'},{id:'i4',sid:'a',gid:'g3',text:'鬼ごっこがしたい',status:'approved'},{id:'i5',sid:'b',gid:'g4',text:'クッキーをつくりたい',status:'approved'},{id:'i6',sid:'b',gid:'g5',text:'段ボールで秘密基地をつくりたい',status:'approved'},{id:'i7',sid:null,gid:'g6',text:'虫取りに行きたい',status:'approved'},{id:'i8',sid:null,gid:'g7',text:'水槽に魚を飼いたい',status:'approved'}]};
+const db={surveys:[{id:'a',label:'A',text:'次は何をして遊びたい？',start:'2020-01-01',end:'2099-12-31',status:'active'},{id:'b',label:'B',text:'みんなで何をつくりたい？',start:'2020-01-01',end:'2099-12-31',status:'active'}],groups:[{id:'g1',sid:'a',name:'サッカー',likes:12},{id:'g2',sid:'a',name:'ゲーム大会',likes:5},{id:'g3',sid:'a',name:'鬼ごっこ',likes:3},{id:'g4',sid:'b',name:'お菓子づくり',likes:9},{id:'g5',sid:'b',name:'工作',likes:6},{id:'g6',sid:null,name:'虫取り',likes:7},{id:'g7',sid:null,name:'魚を飼う',likes:18},{id:'g8',sid:null,name:'お祭り',likes:3}],ideas:[{id:'i1',sid:'a',gid:'g1',text:'サッカー大会がしたい',status:'approved'},{id:'i2',sid:'a',gid:'g1',text:'サッカーの試合をしたい',status:'approved'},{id:'i3',sid:'a',gid:'g2',text:'ゲーム大会がしたい',status:'approved'},{id:'i4',sid:'a',gid:'g3',text:'鬼ごっこがしたい',status:'approved'},{id:'i5',sid:'b',gid:'g4',text:'クッキーをつくりたい',status:'approved'},{id:'i6',sid:'b',gid:'g5',text:'段ボールで秘密基地をつくりたい',status:'approved'},{id:'i7',sid:null,gid:'g6',text:'虫取りに行きたい',status:'approved'},{id:'i8',sid:null,gid:'g7',text:'水槽に魚を飼いたい',status:'approved'},{id:'i9',sid:null,gid:'g8',text:'みんなでお祭りがしたい',status:'approved'}]};
 const liked=new Set(),survey=id=>db.surveys.find(x=>x.id===id),group=id=>db.groups.find(x=>x.id===id),active=s=>s.status==='active'&&s.start<=day(0)&&s.end>=day(0);
+
+const originalDemoData=JSON.parse(JSON.stringify(db));
+try{
+ const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
+ if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
+  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;
+  const nums=[...db.surveys,...db.groups,...db.ideas].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
+  seq=Math.max(seq,...nums);
+ }
+}catch(e){}
+function saveDemo(){try{localStorage.setItem('sannka_demo_data_v3',JSON.stringify(db))}catch(e){}}
+function groupCount(gid){return db.ideas.filter(i=>i.gid===gid&&i.status==='approved').length}
+function mergeGroups(sourceId,targetId){
+ const from=group(sourceId),into=group(targetId);
+ if(!from||!into||from.id===into.id||from.sid!==into.sid)return false;
+ db.ideas.forEach(i=>{if(i.gid===from.id)i.gid=into.id});
+ into.likes=Math.max(0,into.likes+from.likes-(liked.has(from.id)&&liked.has(into.id)?1:0));
+ if(liked.has(from.id)){liked.add(into.id);liked.delete(from.id)}
+ into.hidden=false;
+ db.groups=db.groups.filter(g=>g.id!==from.id);
+ saveDemo();
+ return true;
+}
+function moveIdea(ideaId,targetId){
+ const idea=db.ideas.find(i=>i.id===ideaId&&i.status==='approved'),to=group(targetId);
+ if(!idea||!to||idea.sid!==to.sid||idea.gid===targetId)return false;
+ const from=group(idea.gid);
+ idea.gid=to.id;to.hidden=false;
+ if(from&&groupCount(from.id)===0){mergeGroups(from.id,to.id)}
+ saveDemo();
+ return true;
+}
 const defaultNG=['死ね','しね','殺す','ころす','消えろ','くたばれ'];
 let facilityNG=[];
 try{const v=JSON.parse(localStorage.getItem('sannka_ngword_demo_v1')||'[]');if(Array.isArray(v))facilityNG=v.filter(x=>typeof x==='string'&&x.length<=30)}catch(e){}
@@ -21,8 +53,8 @@ function saveNG(){try{localStorage.setItem('sannka_ngword_demo_v1',JSON.stringif
 function normalized(text){return String(text||'').normalize('NFKC').toLowerCase().replace(/[\s　、。．・_＿ー～~！!？?\-]/g,'')}
 function findNG(text){const n=normalized(text);return [...new Set([...defaultNG,...facilityNG].filter(w=>w&&n.includes(normalized(w))))]}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
-function bubble(g){let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9));let q=survey(g.sid);return `<button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${g.id}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small></button>`}
-function zone(q){let id=q?q.id:null;let list=db.groups.filter(g=>g.sid===id&&!g.hidden);let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${list.map(bubble).join('')}</div>`}
+function bubble(g){let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9));let q=survey(g.sid);return `<button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${g.id}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>`}
+function zone(q){let id=q?q.id:null;let list=db.groups.filter(g=>g.sid===id&&!g.hidden&&groupCount(g.id)>0);let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${list.map(bubble).join('')}</div>`}
 function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}</div>`}
 function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending');let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">承認</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');if(!text)text='<div class="empty">承認待ちはありません。</div>'}if(tab==='ng'){
 text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。差別的な意見を排除するためではなく、安全上の確認に限定します。引用・相談も誤検出される場合があります。</div>`;
@@ -30,18 +62,53 @@ text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワ�
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
 }
-if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}</div>`).join('')};if(tab==='groups'){let sources=[...db.surveys.filter(s=>s.status!=='archived').map(s=>({id:s.id,label:'アンケート '+s.label})),{id:'free',label:'自由な発意'}];if(!sources.some(s=>s.id===selection))selection=sources[0]?.id||'free';let sid=selection==='free'?null:selection;let gs=db.groups.filter(g=>g.sid===sid),is=db.ideas.filter(i=>i.sid===sid&&i.status==='approved');text=`<div class="field"><label>グループの出どころ</label><select id="src">${sources.map(s=>`<option value="${s.id}" ${selection===s.id?'selected':''}>${safe(s.label)}</option>`).join('')}</select></div>`+gs.map(g=>`<div class="entry"><b>${safe(g.name)}　♥ ${g.likes}</b><button class="btn small" data-act="rename" data-id="${g.id}">名前変更</button></div>`).join('')+is.map(i=>`<div class="entry"><span>${safe(i.text)}</span><select class="sm" data-move="${i.id}">${gs.map(g=>`<option value="${g.id}" ${g.id===i.gid?'selected':''}>${safe(g.name)}</option>`).join('')}</select></div>`).join('')}
+if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}</div>`).join('')};if(tab==='groups'){
+ let sources=[...db.surveys.filter(x=>x.status!=='archived').map(x=>({id:x.id,label:'アンケート '+x.label})),{id:'free',label:'自由な発意'}];
+ if(!sources.some(x=>x.id===selection))selection=sources[0]?.id||'free';
+ const sid=selection==='free'?null:selection;
+ const gs=db.groups.filter(g=>g.sid===sid&&groupCount(g.id)>0);
+ const ideas=db.ideas.filter(i=>i.sid===sid&&i.status==='approved');
+ text=`<div class="field"><label>編集するアンケート・発意</label><select id="src">${sources.map(x=>`<option value="${x.id}" ${selection===x.id?'selected':''}>${safe(x.label)}</option>`).join('')}</select></div><div class="mini">同じ問いの中で、複数のバブルを1つにまとめられます。まとめた結果はボードに即時反映されます。</div>`
+ +gs.map(g=>`<div class="entry"><div><b>${safe(g.name)}　♥ ${g.likes}</b><div class="mini">発意 ${groupCount(g.id)}件</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn small" data-act="rename" data-id="${g.id}">名前変更</button>${gs.length>1?`<button class="btn primary small" data-act="attachHere" data-id="${g.id}">ここにまとめる</button>`:''}</div></div>`).join('')
+ +`<div style="font-size:12px;font-weight:800;margin-top:18px">個別の発意をまとめる</div>`
+ +ideas.map(i=>`<div class="entry"><div class="grow"><div class="entry-name">${safe(i.text)}</div><div class="mini">現在：${safe(group(i.gid)?.name||'未分類')}</div></div><button class="btn small" data-act="attachIdea" data-id="${i.id}">同じグループにする</button></div>`).join('')
+ }
+
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
-function render(){$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span><button class="btn primary" data-act="create">＋ アンケート作成</button>`;view==='board'?board():manager()}
+function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span><button class="btn primary" data-act="create">＋ アンケート作成</button>`;view==='board'?board():manager()}
 function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="modal"><div class="modalHead"><b class="brand">SANNKA-KUN</b><button class="btn small" data-act="close">閉じる ×</button></div>${text}</div></div>`}
 function close(){$('#dialog').replaceChildren()}
-function complete(isQuestion,held){popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
+function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
 function suggest(s){let r=[['サッカー',/サッカー|フットサル|ボール/],['ゲーム大会',/ゲーム|switch|スイッチ/i],['お菓子づくり',/お菓子|おかし|クッキー|ケーキ/],['工作',/工作|段ボール|秘密基地/],['虫取り',/虫|昆虫|生き物/],['魚を飼う',/魚|水槽|金魚/]];return r.find(x=>x[1].test(s))?.[0]||s.slice(0,12)}
 function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
 if(a==='create'){popup(`<h3>みんなに問いかける</h3><div class="field"><label>アンケートの問い</label><input id="questionText" maxlength="120" placeholder="例：次のイベントは何をしたい？"></div><div class="two"><div class="field"><label>公開開始日</label><input id="qStart" type="date" value="${day(0)}"></div><div class="field"><label>公開終了日</label><input id="qEnd" type="date" value="${day(7)}"></div></div><div class="actions"><button class="btn primary" type="button" data-act="postQuestion">問いを投稿する</button></div>`);return}
 if(a==='postIdea'){let t=$('#ideaText')?.value.trim();if(!t){$('#ideaText')?.focus();return}let hits=findNG(t),i={id:'i'+(++seq),sid:id||null,gid:null,text:t,status:hits.length?'pending':'approved',authorId:'demo-child',ngHits:hits};db.ideas.push(i);if(!hits.length)publishIdea(i);complete(false,hits.length>0);return}
 if(a==='postQuestion'){let t=$('#questionText')?.value.trim(),st=$('#qStart')?.value,en=$('#qEnd')?.value;if(!t){$('#questionText')?.focus();return}if(!st||!en||en<st){alert('公開期間を確認してください');return}let num=db.surveys.length;let hits=findNG(t);db.surveys.push({id:'s'+(++seq),label:num<26?String.fromCharCode(65+num):String(num+1),text:t,start:st,end:en,status:hits.length?'pending':'active',ngHits:hits});complete(true,hits.length>0);return}
-if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="actions"><button class="btn primary" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
+if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="actions">${role==='staff'?`<button class="btn" data-act="attachHere" data-id="${id}">別のグループをここにまとめる</button>`:''}<button class="btn primary" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
+
+if(a==='attachHere'){
+ let g=group(id);if(!g)return;
+ let options=db.groups.filter(x=>x.id!==g.id&&x.sid===g.sid&&groupCount(x.id)>0);
+ popup(`<h3>「${safe(g.name)}」にまとめる</h3><div class="muted">まとめたいバブルを選んでください。元の発意は消さず、1つのバブルとして表示します。</div>${options.length?`<div class="field"><label>このグループにくっつける発意グループ</label><select id="mergeSource">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件・♥ ${x.likes}）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmMerge" data-id="${g.id}">同じグループにする</button></div>`:'<div class="notice">同じアンケート内に、まだ他のグループがありません。</div>'}`);
+ return;
+}
+if(a==='confirmMerge'){
+ let from=$('#mergeSource')?.value;
+ if(mergeGroups(from,id)){close();view='board';render()}
+ return;
+}
+if(a==='attachIdea'){
+ let idea=db.ideas.find(x=>x.id===id),from=group(idea?.gid);
+ if(!idea)return;
+ let options=db.groups.filter(g=>g.sid===idea.sid&&g.id!==idea.gid&&groupCount(g.id)>0);
+ popup(`<h3>同じグループにする</h3><div class="notice">「${safe(idea.text)}」</div><div class="muted" style="margin-top:9px">移動後も元の発意文と投稿者の記録は残ります。</div>${options.length?`<div class="field"><label>くっつける先のグループ</label><select id="attachTarget">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件）</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmAttachIdea" data-id="${id}">このグループにする</button></div>`:'<div class="notice">同じアンケート内に、移動できる別グループがありません。</div>'}`);
+ return;
+}
+if(a==='confirmAttachIdea'){
+ let target=$('#attachTarget')?.value;
+ if(moveIdea(id,target)){close();view='board';render()}
+ return;
+}
 if(a==='like'){let g=group(id);if(!g)return;g.likes+=liked.has(id)?-1:1;liked.has(id)?liked.delete(id):liked.add(id);render();act('detail',id);return}
 if(a==='approveSurvey'){let q=survey(id);if(q){q.status='active';if(q.start>day(0))q.start=day(0);if(q.end<day(0))q.end=day(7)}render();return}
 if(a==='approveIdea'){let i=db.ideas.find(i=>i.id===id);if(!i)return;publishIdea(i);render();return}
