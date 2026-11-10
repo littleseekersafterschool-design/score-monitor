@@ -213,7 +213,7 @@ text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワ�
 if(tab==='cubes'){
  const list=db.cubes.filter(c=>c.status!=='pending'&&c.status!=='rejected');
  text=`<div class="inline-info">施設が発意に届いた企画書を確認し、必要な場合にのみBubble Pop Mission!を開催します。いいねは共感、Powerは実行への意思表示です。</div>`
- +list.map(c=>`<div class="cube-card"><div class="cube-head"><div><div class="cube-title">🧊 ${safe(c.title)}</div><div class="mini">元のバブル：${safe(group(c.gid)?.name||'不明')} ／ 💜 ${c.likes||0} いいね</div></div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div>${c.status==='mission'?meter(c):''}<div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容を確認</button>${c.status==='proposed'?`<button class="btn primary small" data-act="missionStart" data-id="${safe(c.id)}">📣 ミッションを発動</button>`:''}${c.status==='mission'?`<button class="btn small" data-act="missionStop" data-id="${safe(c.id)}">ミッションを終了</button>`:''}${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">🚀 実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了にする</button>`:''}${c.status==='progress'||c.status==='popped'?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援を編集</button>`:''}<button class="btn small ${c.status==='hidden'?'':'danger'}" data-act="${c.status==='hidden'?'restoreCube':'hideCube'}" data-id="${safe(c.id)}">${c.status==='hidden'?'再表示':'非表示'}</button></div></div>`).join('')
+ +list.map(c=>`<div class="cube-card"><div class="cube-head"><div><div class="cube-title">🧊 ${safe(c.title)}</div><div class="mini">元のバブル：${safe(group(c.gid)?.name||'不明')} ／ 💜 ${c.likes||0} いいね</div></div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div>${c.status==='mission'?meter(c):''}<div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容を確認</button>${c.status==='mission'?`<button class="btn small" data-act="demoBoost" data-id="${safe(c.id)}">⚡ デモ：応援+1</button>`:''}${c.status==='proposed'?`<button class="btn primary small" data-act="missionStart" data-id="${safe(c.id)}">📣 ミッションを発動</button>`:''}${c.status==='mission'?`<button class="btn small" data-act="missionStop" data-id="${safe(c.id)}">ミッションを終了</button>`:''}${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">🚀 実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了にする</button>`:''}${c.status==='progress'||c.status==='popped'?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援を編集</button>`:''}<button class="btn small ${c.status==='hidden'?'':'danger'}" data-act="${c.status==='hidden'?'restoreCube':'hideCube'}" data-id="${safe(c.id)}">${c.status==='hidden'?'再表示':'非表示'}</button></div></div>`).join('')
  ||'<div class="empty">Project Cube はまだありません。こども体験で発意のバブルから提案してみよう！</div>';
 }
 if(tab==='posts'){
@@ -365,6 +365,17 @@ if(a==='power'){
   c.status='popped';saveDemo();render();
   popup(`<div class="pop-scene"><div class="big-pop">🎉 POP!</div><h3>Congrats!</h3><div class="cube-emoji">🫧 ✨ 🧊 🚀</div><p>バブルがはじけて<br><b>みんなのプロジェクト</b>にへんしんしたよ！</p></div><div class="inline-info">「${safe(c.title)}」は実行準備へ進む状態になりました。実施内容や安全面は、こどもと施設で相談して決めます。</div><div class="actions"><button class="btn primary" data-act="cubeDetail" data-id="${safe(c.id)}">プロジェクトを見る</button></div>`);
  }else{saveDemo();render();act('cubeDetail',id)}
+ return;
+}
+
+if(a==='demoBoost'){
+ if(role!=='staff')return;const c=cubeOf(id);
+ if(!c||c.status!=='mission')return;
+ c.powers=(c.powers||0)+1;
+ if(c.powers>=Math.max(1,c.goal||6)){
+  c.status='popped';saveDemo();render();
+  popup(`<div class="pop-scene"><div class="big-pop">🎉 POP!</div><h3>Congrats!</h3><p>${safe(c.title)}<br>みんなのプロジェクトにへんしん！</p></div><div class="inline-info">デモ用の応援を加算して目標達成を再現しました。実施前に安全・資源・少数意見の確認が必要です。</div><div class="actions"><button class="btn primary" data-act="cubeDetail" data-id="${safe(c.id)}">キューブを見る</button></div>`);
+ }else{saveDemo();render()}
  return;
 }
 if(a==='missionStop'){
