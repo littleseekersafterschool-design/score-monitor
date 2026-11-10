@@ -111,6 +111,23 @@
 #sk4 .pop-board-note[hidden]{display:none}
 @keyframes skCubeTransform{0%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);transform:scale(.88) rotate(-10deg);border-radius:12px;filter:brightness(1)}40%{transform:scale(1.18) rotate(12deg);filter:brightness(1.2)}100%{clip-path:polygon(50% 0,98% 94%,2% 94%);transform:scale(1) rotate(0);border-radius:0;filter:brightness(1)}}
 @media(prefers-reduced-motion:reduce){#sk4 .cube-mini.cube-evolving{animation:none;clip-path:polygon(50% 0,98% 94%,2% 94%)}}
+
+/* 重ね合わせ：Bubble の下端にキューブ／三角を少し掛ける */
+#sk4 .bubble-wrap{position:relative;display:flex;align-items:flex-start;justify-content:flex-start;flex-direction:column;min-width:var(--anchor-size,74px);padding:0 12px 26px 0;isolation:isolate}
+#sk4 .bubble-wrap>.bubble{position:relative;z-index:1}
+#sk4 .bubble-wrap>.cube-mini{position:absolute;z-index:2;top:calc(var(--anchor-size,74px) * .67);right:-5px;transform-origin:50% 50%;box-shadow:0 4px 10px rgba(28,122,195,.15)}
+#sk4 .bubble-wrap>.cube-mini:nth-child(3){right:27px;top:calc(var(--anchor-size,74px) * .77);z-index:3}
+#sk4 .bubble-wrap>.cube-mini:nth-child(n+4){right:45px;top:calc(var(--anchor-size,74px) * .88);z-index:4}
+#sk4 .bubble-wrap>.cube-mini:hover{transform:translateY(-4px) scale(1.04)}
+#sk4 .persistent-projects{border:1px solid #c9e0ef;background:linear-gradient(110deg,#f6fbff,#effaff);border-radius:15px;margin-top:13px;padding:13px 13px 10px}
+#sk4 .persistent-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 2px 11px;color:#23668b;font-size:12px}
+#sk4 .persist-island-row{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 12px}
+#sk4 .persist-island{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;position:relative;border:2px dashed #84c3e4;border-radius:64px;background:#fff;padding:22px 15px 10px;min-height:112px;max-width:100%}
+#sk4 .persist-island .island-label{opacity:1}
+#sk4 .residual-scroll{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:9px 8px 0;scroll-snap-type:x proximity}
+#sk4 .residual-pair{flex:0 0 auto;display:flex;align-items:center;justify-content:center;border:1px solid #d4e9f5;background:rgba(255,255,255,.9);border-radius:24px;padding:12px 10px 3px;min-width:120px;scroll-snap-align:start}
+#sk4 .residual-pair .bubble-wrap{margin:0 auto}
+@media(max-width:530px){#sk4 .bubble-wrap{padding-bottom:27px}#sk4 .persist-island-row{display:flex;flex-direction:column}#sk4 .persist-island{max-width:100%}}
 </style>
 <div class="app"><header><div class="brand-row"><img class="brand-avatar" src="data:image/webp;base64,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" alt="さんかくんのキャラクターロゴ"><div><div class="brand">SANNKA-KUN! · BUBBLE WORLD</div><h2>みんなの発意ボード 🫧</h2><div class="muted">Little.Seekers｜Bubble 操作モック</div></div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
@@ -285,6 +302,45 @@ function messageTitle(m,type){return type==='result'?'🎉 POP! Congrats!｜結�
 function cubeOf(id){return db.cubes.find(c=>c.id===id)}
 function cubeStatus(c){return ({proposed:'企画アイデア',popped:'認定プロジェクト',progress:'実行中',done:'実行完了',pending:'職員の確認待ち',hidden:'非表示',rejected:'非公開'})[c.status]||c.status}
 function visibleCubes(gid){return db.cubes.filter(c=>c.gid===gid&&['proposed','mission','popped','progress','done'].includes(c.status))}
+
+function projectCubesOf(gid){
+ return db.cubes.filter(c=>c.gid===gid&&['popped','progress','done'].includes(c.status));
+}
+function hasProject(gid){return projectCubesOf(gid).length>0}
+function shouldBeResidual(g){
+ return !!g&&!g.hidden&&groupCount(g.id)>0&&hasProject(g.id)&&!islandFor(g.id);
+}
+function expireSurveys(){
+ let changed=false;
+ for(const q of db.surveys){
+  if(q.status==='active'&&q.end&&q.end<day(0)){q.status='archived';q.archivedAt=new Date().toISOString();changed=true}
+ }
+ if(changed)saveDemo();
+ return changed;
+}
+function visibleRetainedIslands(){
+ return db.islands.filter(i=>i.sid!==null&&i.sid!==undefined&&!active(survey(i.sid)||{}))
+ .map(i=>{
+  const members=i.members.map(id=>group(id)).filter(g=>g&&!g.hidden&&hasProject(g.id)&&groupCount(g.id)>0);
+  return {island:i,members};
+ }).filter(x=>x.members.length>0);
+}
+function persistentProjectArea(){
+ const ungrouped=db.groups.filter(shouldBeResidual);
+ const retained=visibleRetainedIslands();
+ if(!ungrouped.length&&!retained.length)return '';
+ const islands=retained.map(({island,members})=>`<div class="persist-island" title="${safe(islandName(island))}">
+ <span class="island-label"># ${safe(islandName(island))}</span>
+ ${members.map(bubble).join('')}
+ </div>`).join('');
+ const independent=ungrouped.map(g=>`<div class="residual-pair">${bubble(g)}</div>`).join('');
+ return `<section class="persistent-projects" aria-label="継続している認定プロジェクト"><div class="persistent-top"><div>
+ <b>🔺 残留プロジェクト</b><div class="inline-info">アンケートが終わっても、認定された三角と元の発意は残ります。</div></div>
+ <span class="badge">${ungrouped.length+retained.reduce((n,x)=>n+x.members.length,0)} 件</span></div>
+ ${retained.length?`<div class="persist-island-row">${islands}</div>`:''}
+ ${ungrouped.length?`<div class="residual-scroll">${independent}</div>`:''}
+ </section>`;
+}
 function cubeAttached(gid){return visibleCubes(gid).sort((a,b)=>(['popped','progress','done'].includes(a.status)?-1:0)-(['popped','progress','done'].includes(b.status)?-1:0))}
 function meter(c){let percent=Math.min(100,Math.round(100*(c.powers||0)/Math.max(1,c.goal||6)));return `<div class="meter" aria-label="投票の達成度 ${percent}%"><span style="width:${percent}%"></span></div><div class="inline-info">⚡ ${c.powers||0} / ${c.goal||6} パワー　（${percent}%）</div>`}
 function cubeBlock(c){
@@ -346,11 +402,11 @@ const pendingBoardReveals=new Set();
 function bubble(g){
  let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
  let cubes=cubeAttached(g.id);
- return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6)),project=['popped','progress','done'].includes(c.status)&&!revealCubeIds.has(c.id);return `<button class="cube-mini ${project?'project':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">${project?'▲':'▣'} <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
+ return `<div class="bubble-wrap" style="--anchor-size:${n}px"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6)),project=['popped','progress','done'].includes(c.status)&&!revealCubeIds.has(c.id);return `<button class="cube-mini ${project?'project':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">${project?'▲':'▣'} <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
 }
 function zone(q){
 let id=q?q.id:null;
-let list=db.groups.filter(g=>g.sid===id&&!g.hidden&&groupCount(g.id)>0);
+let list=db.groups.filter(g=>g.sid===id&&!g.hidden&&groupCount(g.id)>0&&!shouldBeResidual(g));
 let used=new Set();
 let islands=db.islands.filter(i=>i.sid===id).map(i=>{
  const members=i.members.map(mid=>list.find(g=>g.id===mid)).filter(Boolean);
@@ -372,6 +428,7 @@ function board(){
  }
  const hasReveal=revealCubeIds.size>0,ids=[...revealCubeIds];
  $('#view').innerHTML=`<div class="map"><div class="pop-board-note" id="popBoardNote" hidden aria-live="polite">🎉 POP! キューブが「みんなのプロジェクト」に進化したよ！</div>${qs.map(zone).join('')}${zone(null)}</div>
+ ${persistentProjectArea()}
  <div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube → 🔺 みんなのプロジェクト</span></div>`;
  if(hasReveal){
   const accountAtReveal=currentAccount;
@@ -450,6 +507,7 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length+pins.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
 function render(){
+ expireSurveys();
  saveDemo();
  $('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;
  const accountPicker=role==='child'?`<select id="demoAccount" class="user-select" aria-label="デモのこどもアカウントを選択">${demoAccounts.map(a=>`<option value="${safe(a.id)}" ${a.id===currentAccount?'selected':''}>${safe(a.name)}</option>`).join('')}</select>`:'';
@@ -739,7 +797,7 @@ if(a==='addNGWord'){let word=$('#addNGWord')?.value.trim();if(!word)return;const
 if(a==='removeNGWord'){let ix=Number(id);if(Number.isInteger(ix)&&ix>=0&&ix<facilityNG.length){facilityNG.splice(ix,1);saveNG();render()}return}
 if(a==='hideIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='approved'){i.status='hidden';let g=group(i.gid);if(g&&!db.ideas.some(x=>x.gid===g.id&&x.status==='approved'))g.hidden=true;}render();return}
 if(a==='restoreIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='hidden'){const hits=findNG(i.text);i.ngHits=hits;if(hits.length){i.status='pending'}else{i.status='approved';let g=group(i.gid);if(g)g.hidden=false;}}render();return}
-if(a==='archive'){let q=survey(id);if(q)q.status='archived';render();return}
+if(a==='archive'){let q=survey(id);if(q){q.status='archived';q.archivedAt=new Date().toISOString()}render();return}
 if(a==='history'){let q=survey(id);if(!q)return;let li=db.ideas.filter(i=>i.sid===id&&i.status==='approved');popup(`<h3>アンケートの履歴</h3><div class="notice"><b>${safe(q.text)}</b><br>${safe(q.start)}〜${safe(q.end)}<br>承認済み ${li.length}件</div>${li.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}`);return}
 if(a==='rename'){let g=group(id);popup(`<h3>グループ名の変更</h3><div class="field"><label>グループ名</label><input id="renameText" value="${safe(g.name)}"></div><div class="actions"><button class="btn primary" data-act="saveName" data-id="${id}">変更する</button></div>`);return}
 if(a==='saveName'){
@@ -761,7 +819,7 @@ root.addEventListener('change',e=>{
 });
 root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
 render();
-if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(()=>{if(settleExpiredMissions())render()},60000);
+if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(()=>{if(settleExpiredMissions()||expireSurveys())render()},60000);
 })();
 </script>
 </div></body></html>
