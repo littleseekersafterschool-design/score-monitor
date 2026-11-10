@@ -272,7 +272,33 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length+pins.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
 function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;view==='board'?board():view==='cubes'?cubeListView():manager()}
-function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="modal"><div class="modalHead"><b class="brand">SANNKA-KUN</b><button class="btn small" data-act="close">閉じる ×</button></div>${text}</div></div>`}
+
+function fxReduced(){return typeof window!=='undefined'&&typeof window.matchMedia==='function'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches}
+function fxReact(anchor,kind='heart'){
+ if(!anchor||fxReduced()||typeof document.createElement!=='function')return;
+ const box=anchor.getBoundingClientRect();
+ anchor.classList?.add('sk-react');
+ setTimeout(()=>anchor.classList?.remove('sk-react'),960);
+ const symbols=kind==='power'?['⚡','🫧','✨','⚡','🫧']:['💗','♡','💗','🫧','♡'];
+ for(let i=0;i<symbols.length;i++){
+  const p=document.createElement('span');p.className='sk-float-heart';
+  p.textContent=symbols[i];p.style.left=(box.left+box.width/2+(i-2)*7)+'px';p.style.top=(box.top+box.height*.37)+'px';
+  p.style.setProperty('--dx',((i-2)*27)+'px');p.style.setProperty('--dy',(-56-(i%3)*22)+'px');
+  p.style.animationDelay=(i*.045)+'s';document.body.appendChild(p);setTimeout(()=>p.remove(),1450);
+ }
+}
+function fxDecoratePop(scene){
+ if(!scene||fxReduced()||typeof document.createElement!=='function')return;
+ const colors=['#7dd3fc','#249cdf','#e7f9ff','#ffe28a','#67bdb3','#a1dcff','#3d8ddd'];
+ for(let i=0;i<18;i++){
+  const p=document.createElement('span'),a=(i/18)*Math.PI*2,dist=65+(i%4)*26;
+  p.className='sk-confetti'+(i%4===0?' star':'');
+  p.style.setProperty('--px',Math.round(Math.cos(a)*dist)+'px');p.style.setProperty('--py',Math.round(Math.sin(a)*dist-20)+'px');
+  p.style.setProperty('--delay',(i%4)*.04+'s');p.style.setProperty('--spin',(i*53)+'deg');p.style.setProperty('--pbg',colors[i%colors.length]);
+  scene.appendChild(p);
+ }
+}
+function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="modal"><div class="modalHead"><b class="brand">SANNKA-KUN</b><button class="btn small" data-act="close">閉じる ×</button></div>${text}</div></div>`;fxDecoratePop($('#dialog .pop-scene'))}
 function close(){$('#dialog').replaceChildren()}
 function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
 function suggest(s){let r=[['サッカー',/サッカー|フットサル|ボール/],['ゲーム大会',/ゲーム|switch|スイッチ/i],['お菓子づくり',/お菓子|おかし|クッキー|ケーキ/],['工作',/工作|段ボール|秘密基地/],['虫取り',/虫|昆虫|生き物/],['魚を飼う',/魚|水槽|金魚/]];return r.find(x=>x[1].test(s))?.[0]||s.slice(0,12)}
@@ -378,7 +404,7 @@ if(a==='cubeDetail'){
 }
 if(a==='cubeLike'){
  const c=cubeOf(id);if(!c||!['proposed','mission','popped','progress','done'].includes(c.status))return;
- c.likes=Math.max(0,(c.likes||0)+(c.myLiked?-1:1));c.myLiked=!c.myLiked;saveDemo();render();act('cubeDetail',id);return;
+ const adding=!c.myLiked;c.likes=Math.max(0,(c.likes||0)+(c.myLiked?-1:1));c.myLiked=!c.myLiked;saveDemo();render();act('cubeDetail',id);if(adding)fxReact($('#dialog [data-act="cubeLike"]'));return;
 }
 if(a==='missionStart'){
  if(role!=='staff')return;const c=cubeOf(id);if(!c||c.status!=='proposed')return;
@@ -401,7 +427,7 @@ if(a==='power'){
  if(c.powers>=Math.max(1,c.goal||6)){
   c.status='popped';saveDemo();render();
   popup(`<div class="pop-scene"><div class="big-pop">🎉 POP!</div><h3>Congrats!</h3><div class="cube-emoji">🫧 ✨ 🧊 🚀</div><p>バブルがはじけて<br><b>みんなのプロジェクト</b>にへんしんしたよ！</p></div><div class="inline-info">「${safe(c.title)}」は実行準備へ進む状態になりました。実施内容や安全面は、こどもと施設で相談して決めます。</div><div class="actions"><button class="btn primary" data-act="cubeDetail" data-id="${safe(c.id)}">プロジェクトを見る</button></div>`);
- }else{saveDemo();render();act('cubeDetail',id)}
+ }else{saveDemo();render();act('cubeDetail',id);fxReact($('#dialog [data-act="power"]')||$('[data-act="cubeDetail"][data-id="'+id+'"]'),'power')}
  return;
 }
 
@@ -449,7 +475,7 @@ if(a==='restoreCube'){
  if(hits.length){c.status='pending';c.ngHits=hits}else c.status=c.previousStatus||'proposed';
  saveDemo();render();return;
 }
-if(a==='like'){let g=group(id);if(!g)return;g.likes+=liked.has(id)?-1:1;liked.has(id)?liked.delete(id):liked.add(id);render();act('detail',id);return}
+if(a==='like'){let g=group(id);if(!g)return;const adding=!liked.has(id);g.likes+=adding?1:-1;adding?liked.add(id):liked.delete(id);render();act('detail',id);if(adding)fxReact($('#dialog [data-act="like"]')||$('[data-act="detail"][data-id="'+id+'"]'));return}
 if(a==='rejectSurvey'){let q=survey(id);if(q){q.status='rejected';render()}return}
 if(a==='approveName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g){g.name=n.name;g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
 if(a==='rejectName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g&&n.legacy){g.name='確認済みの発意';g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
