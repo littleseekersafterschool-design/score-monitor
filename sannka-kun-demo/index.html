@@ -115,8 +115,8 @@ const originalDemoData=JSON.parse(JSON.stringify(db));
 try{
  const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
  if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
-  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.missions=Array.isArray(old.missions)?old.missions:undefined;
-  const nums=[...db.surveys,...db.groups,...db.ideas].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
+  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;
+  const nums=[...db.surveys,...db.groups,...db.ideas,...db.islands,...(db.cubes||[]),...(db.missions||[]),...db.pendingNames,...db.pendingIslandNames].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
   seq=Math.max(seq,...nums);
  }
 }catch(e){}
