@@ -479,43 +479,98 @@ if(a==='cubeLike'){
  const c=cubeOf(id);if(!c||!['proposed','mission','popped','progress','done'].includes(c.status))return;
  const adding=!c.myLiked;c.likes=Math.max(0,(c.likes||0)+(c.myLiked?-1:1));c.myLiked=!c.myLiked;saveDemo();render();act('cubeDetail',id);if(adding)fxReact($('#dialog [data-act="cubeLike"]'));return;
 }
-if(a==='missionStart'){
- if(role!=='staff')return;const c=cubeOf(id);if(!c||c.status!=='proposed')return;
- popup(`<h3>📣 Bubble Pop Mission! を発動</h3><div class="notice">🧊 ${safe(c.title)}<br>この企画の実行に向けた意思を、施設のみんなに聞きます。少数意見や反対意見を尊重し、目標達成後の実行も施設とこどもで確認します。</div>
- <div class="field"><label>目標パワー数（投票数）</label><input id="missionGoal" type="number" min="1" max="999" value="6"></div>
- <div class="field"><label>投票の締切</label><input id="missionDeadline" type="date" value="${day(7)}"></div>
- <div class="actions"><button class="btn primary" data-act="missionActivate" data-id="${safe(c.id)}">ミッション開始！</button></div>`);
- return;
-}
-if(a==='missionActivate'){
- if(role!=='staff')return;const c=cubeOf(id);if(!c||c.status!=='proposed')return;
- const goal=Number($('#missionGoal')?.value),date=$('#missionDeadline')?.value;
- if(!Number.isInteger(goal)||goal<1||goal>999||!date||date<day(0)){alert('目標数と締切を確認してください');return}
- c.status='mission';c.goal=goal;c.powers=0;c.myPowered=false;c.deadline=date;saveDemo();close();view='board';render();return;
-}
-if(a==='power'){
- const c=cubeOf(id);if(!c||c.status!=='mission'||c.myPowered)return;
- if(c.deadline&&c.deadline<day(0)){popup('<h3>投票期間が終了しています</h3><div class="notice">職員が結果を確認しています。</div><div class="actions"><button class="btn" data-act="board">ボードへ</button></div>');return}
- c.myPowered=true;c.powers=(c.powers||0)+1;
- if(c.powers>=Math.max(1,c.goal||6)){
-  c.status='popped';saveDemo();render();
-  popup(`<div class="pop-scene"><div class="big-pop">🎉 POP!</div><h3>Congrats!</h3><div class="cube-emoji">🫧 ✨ 🧊 🚀</div><p>バブルがはじけて<br><b>みんなのプロジェクト</b>にへんしんしたよ！</p></div><div class="inline-info">「${safe(c.title)}」は実行準備へ進む状態になりました。実施内容や安全面は、こどもと施設で相談して決めます。</div><div class="actions"><button class="btn primary" data-act="cubeDetail" data-id="${safe(c.id)}">プロジェクトを見る</button></div>`);
- }else{saveDemo();render();act('cubeDetail',id);fxReact($('#dialog [data-act="power"]')||$('[data-act="cubeDetail"][data-id="'+id+'"]'),'power')}
- return;
-}
 
-if(a==='demoBoost'){
- if(role!=='staff')return;const c=cubeOf(id);
- if(!c||c.status!=='mission')return;
- c.powers=(c.powers||0)+1;
- if(c.powers>=Math.max(1,c.goal||6)){
-  c.status='popped';saveDemo();render();
-  popup(`<div class="pop-scene"><div class="big-pop">🎉 POP!</div><h3>Congrats!</h3><p>${safe(c.title)}<br>みんなのプロジェクトにへんしん！</p></div><div class="inline-info">デモ用の応援を加算して目標達成を再現しました。実施前に安全・資源・少数意見の確認が必要です。</div><div class="actions"><button class="btn primary" data-act="cubeDetail" data-id="${safe(c.id)}">キューブを見る</button></div>`);
- }else{saveDemo();render()}
+/* Power to Pop はアカウント別受信箱で投票し、施設が結果を確定送信する */
+if(a==='newMission'){
+ if(role!=='staff')return;
+ const choices=db.cubes.filter(c=>c.status==='proposed');
+ if(!choices.length){popup('<h3>キューブがありません</h3><div class="notice">最初に発意のバブルからProject Cubeを作成してください。</div>');return}
+ popup(`<h3>📣 Power to Pop Mission! を送信</h3><div class="inline-info">施設からこどもたちのアカウントに投票のおしらせを届けます。ボードにはミッションを表示しません。</div>
+ <div class="field"><label>ミッションの名前</label><input id="missionNewTitle" maxlength="90" value="みんなのプロジェクトを選ぼう！"></div>
+ <div class="field"><label>投票候補のキューブ</label>${choices.map(c=>`<label class="vote-choice"><input type="checkbox" data-nominee value="${safe(c.id)}" checked><span>🧊 <b>${safe(c.title)}</b></span></label>`).join('')}</div>
+ <div class="two"><div class="field"><label>1人が投票できる票数</label><input type="number" id="missionQuota" min="1" max="20" value="1"></div><div class="field"><label>認定する上位の件数</label><input type="number" id="missionTop" min="1" max="20" value="1"></div></div>
+ <div class="field"><label>投票締切日</label><input type="date" id="missionEnd" value="${day(7)}"></div>
+ <div class="inline-info">こどもは投票候補から、設定された票数まで別々のキューブを選んで1回だけ送信できます。票数は候補数以下に設定してください。</div>
+ <div class="actions"><button class="btn primary" data-act="sendMission">✉ ミッションをアカウントに送信</button></div>`);
  return;
 }
-if(a==='missionStop'){
- if(role!=='staff')return;const c=cubeOf(id);if(c&&c.status==='mission'){c.status='proposed';saveDemo();render()}return;
+if(a==='sendMission'){
+ if(role!=='staff')return;
+ const candidates=[...root.querySelectorAll('[data-nominee]:checked')].map(el=>el.value);
+ const perUserVotes=Number($('#missionQuota')?.value),winnerCount=Number($('#missionTop')?.value),deadline=$('#missionEnd')?.value,title=$('#missionNewTitle')?.value.trim();
+ if(!title||!deadline||deadline<day(0)||candidates.length<1||!Number.isInteger(perUserVotes)||perUserVotes<1||perUserVotes>candidates.length||!Number.isInteger(winnerCount)||winnerCount<1||winnerCount>candidates.length){alert('候補・票数・上位認定件数・締切日を確認してください。票数と認定件数は候補数以下にしてください。');return}
+ if(findNG(title).length){alert('ミッション名に確認が必要な言葉があります。表現を変更してください。');return}
+ const m={id:'mission'+(++seq),subject:'Power to Pop Mission!',title,candidates,perUserVotes,winnerCount,deadline,status:'open',ballots:{},opened:{},resultOpened:{},winners:[],createdAt:day(0),publishedAt:null};
+ db.missions.push(m);saveDemo();close();tab='cubes';view='manage';render();
+ popup(`<h3>✉ ミッションを送信しました！</h3><div class="notice">こどもアカウントの「おしらせ」に <b>Power to Pop Mission!</b> が届きました。ボードには表示されません。</div><div class="actions"><button class="btn primary" data-act="board">ボードへ</button><button class="btn" data-act="inbox">こどもで受信を確認する</button></div>`);
+ return;
+}
+if(a==='openMail'){
+ const sep=String(id||'').lastIndexOf('|'),mid=String(id||'').slice(0,sep),type=String(id||'').slice(sep+1),m=activeMission(mid);
+ if(!m||sep<0)return;
+ if(type==='result'){
+  if(m.status!=='results_sent')return;
+  m.resultOpened=m.resultOpened||{};m.resultOpened[currentAccount]=true;saveDemo();render();
+  const winners=m.winners.map(x=>cubeOf(x)).filter(Boolean);
+  const all=missionRanking(m);
+  popup(`<div class="brand">RESULT MESSAGE · POWER TO POP</div><div class="result-scene"><div class="square-to-triangle">▲</div><div class="big-pop" style="font-size:26px;font-weight:950;margin-top:16px;color:#136eaa">🎉 POP! Congrats!</div><h3>はじけて、へんしんしたよ！</h3><p>みんなの投票で認定されたキューブが<br><b>三角の「みんなのプロジェクト」</b>になりました！</p></div>
+ <div class="inline-info" style="margin:12px 0">${safe(m.title)}｜投票結果（集計後、施設が確定・送信）</div>
+ ${winners.map(c=>`<div class="result-podium"><span class="triangle-symbol">▲</span><div><b>${safe(c.title)}</b><div class="inline-info">⚡ ${nomineeCount(m,c.id)}票　認定プロジェクト</div></div></div>`).join('')}
+ <div class="inline-info" style="margin:12px 0">${all.map(c=>safe(c.title)+'：'+c.votes+'票').join(' ／ ')}</div>
+ <div class="notice">POPは実行準備に進む合図です。実施内容や安全面は、こどもと施設で相談して決めます。認定されなかった声や少数意見も記録に残ります。</div>
+ <div class="actions"><button class="btn primary" data-act="inbox">おしらせに戻る</button><button class="btn" data-act="cubeList">キューブを見に行く</button></div>`);
+ return;
+ }
+ m.opened=m.opened||{};m.opened[currentAccount]=true;saveDemo();render();
+ const ballot=m.ballots?.[currentAccount],canVote=m.status==='open'&&(!m.deadline||m.deadline>=day(0));
+ popup(`<div class="brand">YOU HAVE MAIL · SANNKA-KUN!</div><h3>⚡ Power to Pop Mission!</h3><div class="notice"><b>${safe(m.title)}</b><br>実現してほしい企画をえらんで、あなたのパワーを送ろう！</div>
+ <div class="vote-stats">あなたが投票できるのは <b>${m.perUserVotes}票まで</b>。各キューブには1票ずつ投票できます。<br>投票期限：${safe(m.deadline)}　<span id="ballotCount"></span></div>
+ ${ballot?`<div class="notice">✅ 投票を受け付けました！ 選んだキューブ：${ballot.map(x=>safe(cubeOf(x)?.title||'')).join('、')}</div>`:canVote?`<div id="mailVoteChoices">${missionCandidates(m).map(c=>`<label class="vote-choice"><input type="checkbox" data-ballot-choice value="${safe(c.id)}"><span>🧊 <b>${safe(c.title)}</b><br><span class="inline-info">${safe(c.how||'詳しい企画内容を見てみよう')}</span></span></label>`).join('')}</div><div class="actions"><button class="btn primary" data-act="submitBallot" data-id="${safe(m.id)}">⚡ パワーを投票する！</button></div>`:'<div class="notice">投票の受付は終了しました。施設から結果のおしらせが届くまでお楽しみに。</div>'}
+ <div class="inline-info" style="margin-top:14px">「いいね！」は共感、この投票は「実現してほしい」という意思表示です。</div><div class="actions"><button class="btn" data-act="inbox">受信箱に戻る</button></div>`);
+ return;
+}
+if(a==='submitBallot'){
+ const m=activeMission(id);if(!m||m.status!=='open'||(m.deadline&&m.deadline<day(0))||m.ballots[currentAccount])return;
+ const selected=[...root.querySelectorAll('[data-ballot-choice]:checked')].map(el=>el.value);
+ if(!selected.length||selected.length>m.perUserVotes||new Set(selected).size!==selected.length||selected.some(x=>!m.candidates.includes(x))){alert('投票できるキューブと票数を確認してください。');return}
+ m.ballots[currentAccount]=selected;saveDemo();render();
+ popup(`<h3>⚡ パワーが届いたよ！</h3><div class="notice">${selected.length}票を投票しました。<br>今回選んだ企画：<b>${selected.map(x=>safe(cubeOf(x)?.title||'')).join('、')}</b></div><p class="inline-info">1つのミッションにつき、1アカウント1回だけ送信できます。結果は施設が確定・送信するまで公開されません。</p><div class="actions"><button class="btn primary" data-act="inbox">受信箱に戻る</button></div>`);
+ fxReact($('#dialog .notice'),'power');
+ return;
+}
+if(a==='closeVoting'){
+ if(role!=='staff')return;const m=activeMission(id);if(!m||m.status!=='open')return;
+ m.status='closed';saveDemo();render();return;
+}
+if(a==='reviewMission'){
+ if(role!=='staff')return;const m=activeMission(id);if(!m)return;
+ const ranked=missionRanking(m),voters=Object.keys(m.ballots||{}).length,num=Math.min(m.winnerCount,ranked.length);
+ const cutoff=ranked[num-1]?.votes||0,eligible=ranked.filter(x=>x.votes>=cutoff);
+ const higher=ranked.filter(x=>x.votes>cutoff);
+ const allowed=eligible.map(x=>x.id);
+ const already=m.status==='results_sent';
+ popup(`<h3>📊 Power to Pop 結果・認定</h3><div class="notice"><b>${safe(m.title)}</b><br>投票した人数：${voters}人 ／ 1人 ${m.perUserVotes}票まで<br>施設が認定する上位 ${m.winnerCount}件</div>
+ <div class="inline-info" style="margin-top:12px">結果は、ここで確定・送信するまで利用者に配信されません。ボード上のキューブも変化しません。</div>
+ ${ranked.map((c,index)=>`<label class="rank-row"><span style="display:flex;align-items:center;gap:9px"><input type="checkbox" data-winner-pick value="${safe(c.id)}" ${already?(m.winners.includes(c.id)?'checked':'disabled'):index<num?'checked':''} ${already?'disabled':c.votes<cutoff?'disabled':''}><span><b>${index+1}位　${safe(c.title)}</b><br><span class="inline-info">⚡ ${c.votes}票</span></span></span>${(already?m.winners.includes(c.id):index<num)?'<span class="result-badge">認定候補</span>':''}</label>`).join('')}
+ ${cutoff>0&&eligible.length>num?`<div class="notice">同点があるため認定枠 ${num} 件の範囲で、施設が同点の候補を選んでください。得票が上位の候補は除外できません。</div>`:''}
+ ${already?`<div class="success">✅ 結果は送信済みです。認定：${m.winners.map(id=>safe(cubeOf(id)?.title||'')).join('、')}</div>`:m.status==='open'?`<div class="actions"><button class="btn primary" data-act="closeAndReview" data-id="${safe(m.id)}">投票受付を終了して開票</button></div>`:voters===0?'<div class="notice">まだ投票がありません。投票を受け取ってから結果を認定してください。</div>':`<div class="actions"><button class="btn primary" data-act="publishMission" data-id="${safe(m.id)}">🎉 結果を反映＆送信</button></div>`}
+ <div class="actions"><button class="btn" data-act="close">閉じる</button></div>`);
+ return;
+}
+if(a==='closeAndReview'){
+ if(role!=='staff')return;const m=activeMission(id);if(m&&m.status==='open'){m.status='closed';saveDemo();render();act('reviewMission',id)}return;
+}
+if(a==='publishMission'){
+ if(role!=='staff')return;const m=activeMission(id);if(!m||m.status!=='closed')return;
+ const ranked=missionRanking(m),num=Math.min(m.winnerCount,ranked.length),cutoff=ranked[num-1]?.votes||0;
+ const winners=[...root.querySelectorAll('[data-winner-pick]:checked')].map(x=>x.value),higher=ranked.filter(x=>x.votes>cutoff).map(x=>x.id),eligible=ranked.filter(x=>x.votes>=cutoff).map(x=>x.id);
+ if(!Object.keys(m.ballots||{}).length){alert('まだ誰も投票していません');return}
+ if(winners.length!==num||winners.some(x=>!eligible.includes(x))||higher.some(x=>!winners.includes(x))){alert('認定は上位'+num+'件から選び、得票の高い候補を必ず含めてください。');return}
+ m.winners=winners;m.status='results_sent';m.publishedAt=day(0);m.resultOpened={};
+ for(const id of winners){const c=cubeOf(id);if(c&&['proposed'].includes(c.status)){c.status='popped';c.recognizedMission=m.id}}
+ saveDemo();close();view='manage';tab='cubes';render();
+ popup(`<h3>🎉 結果を反映・送信しました！</h3><div class="notice">認定されたキューブは三角の「みんなのプロジェクト」へ変わりました。全デモアカウントの受信箱にも、結果をお知らせしています。</div><div class="actions"><button class="btn primary" data-act="inbox">こどもの結果メールを見る</button><button class="btn" data-act="cubeList">三角プロジェクトを見る</button></div>`);
+ return;
 }
 if(a==='markProgress'){
  if(role!=='staff')return;const c=cubeOf(id);if(c&&c.status==='popped'){c.status='progress';saveDemo();render()}return;
