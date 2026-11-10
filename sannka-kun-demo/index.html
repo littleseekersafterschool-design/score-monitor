@@ -201,9 +201,65 @@ let currentAccount='demo-child-01';
 try{const oldId=localStorage.getItem('sannka_current_account_v1');if(demoAccounts.some(x=>x.id===oldId))currentAccount=oldId;}catch(e){}
 function saveAccount(){try{localStorage.setItem('sannka_current_account_v1',currentAccount)}catch(e){}}
 function activeMission(id){return db.missions.find(x=>x.id===id)}
-function nomineeCount(m,cubeId){return Object.values(m.ballots||{}).reduce((n,choices)=>n+(Array.isArray(choices)&&choices.includes(cubeId)?1:0),0)}
-function missionCandidates(m){return m.candidates.map(id=>cubeOf(id)).filter(c=>c&&c.status!=='hidden'&&c.status!=='rejected')}
-function missionRanking(m){return missionCandidates(m).map(c=>({...c,votes:nomineeCount(m,c.id)})).sort((a,b)=>b.votes-a.votes||m.candidates.indexOf(a.id)-m.candidates.indexOf(b.id))}
+
+/* 施設から送る時点で、発意ボードにある公開済みの全キューブを対象とする */
+function availableBoardCubes(){
+ return db.cubes.filter(c=>{
+  if(c.status!=='proposed')return false;
+  const g=group(c.gid);if(!g||g.hidden||groupCount(g.id)===0)return false;
+  if(g.sid!==null&&g.sid!==undefined){const q=survey(g.sid);if(!q||!active(q))return false}
+  return true;
+ });
+}
+function ballotAllocations(ballot){
+ if(Array.isArray(ballot)){
+  const out={};for(const id of ballot)out[id]=(out[id]||0)+1;return out;
+ }
+ return ballot&&typeof ballot==='object'&&!Array.isArray(ballot)?ballot:{};
+}
+function nomineeCount(m,cubeId){
+ return Object.values(m.ballots||{}).reduce((n,ballot)=>n+(Number(ballotAllocations(ballot)[cubeId])||0),0);
+}
+function receivedVotes(m){return m.candidates.reduce((n,id)=>n+nomineeCount(m,id),0)}
+function missionCandidates(m){return m.candidates.map(id=>cubeOf(id)).filter(Boolean)}
+function missionRanking(m){
+ return missionCandidates(m).map(c=>({...c,votes:nomineeCount(m,c.id)}))
+ .sort((a,b)=>b.votes-a.votes||m.candidates.indexOf(a.id)-m.candidates.indexOf(b.id));
+}
+function finalizeMission(m,reason){
+ if(!m||m.status!=='open')return false;
+ const ranked=missionRanking(m),limit=Math.max(0,Math.min(Number(m.winnerCount)||1,ranked.length));
+ // 0票の候補は「認定」にしない。同票なら候補登録順で順位を決める（デモ仕様）。
+ const winners=ranked.filter(c=>c.votes>0).slice(0,limit).map(c=>c.id);
+ m.winners=winners;m.status='results_sent';m.closedBy=reason;m.publishedAt=new Date().toISOString();
+ m.resultOpened=m.resultOpened||{};m.boardViewed=m.boardViewed||{};
+ for(const id of winners){
+  const cube=cubeOf(id);
+  if(cube&&cube.status==='proposed'){cube.status='popped';cube.recognizedMission=m.id}
+ }
+ saveDemo();return true;
+}
+function settleExpiredMissions(){
+ let changed=false;
+ for(const m of db.missions){
+  if(m.status==='open'&&m.deadline&&day(0)>m.deadline)changed=finalizeMission(m,'deadline')||changed;
+  if(m.status==='closed')changed=(m.status='open',finalizeMission(m,'legacy-closed'))||changed;
+ }
+ return changed;
+}
+function migratePowerMissions(){
+ if(db.powerMissionVersion===2)return;
+ for(const m of db.missions){
+  m.ballots=m.ballots||{};
+  for(const [userId,ballot] of Object.entries(m.ballots))m.ballots[userId]=ballotAllocations(ballot);
+  m.opened=m.opened||{};m.resultOpened=m.resultOpened||{};
+  m.boardViewed=m.boardViewed||{};
+  // 従来のデモの既存投票・送信済み結果は維持する。
+ }
+ db.powerMissionVersion=2;
+ saveDemo();
+}
+migratePowerMissions();
 function inboxItems(){return [...db.missions].reverse().flatMap(m=>{
  let msgs=[];
  if(m.status==='results_sent')msgs.push({id:m.id,type:'result',read:!!m.resultOpened?.[currentAccount]});
