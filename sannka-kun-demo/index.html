@@ -119,7 +119,7 @@
 #sk4 .bubble-wrap>.cube-mini:nth-child(3){right:27px;top:calc(var(--anchor-size,74px) * .77);z-index:3}
 #sk4 .bubble-wrap>.cube-mini:nth-child(n+4){right:45px;top:calc(var(--anchor-size,74px) * .88);z-index:4}
 #sk4 .bubble-wrap>.cube-mini:hover{transform:translateY(-4px) scale(1.04)}
-#sk4 .persistent-projects{border:1px solid #c9e0ef;background:linear-gradient(110deg,#f6fbff,#effaff);border-radius:15px;margin-top:13px;padding:13px 13px 10px}
+#sk4 .persistent-projects{grid-column:1/-1;min-width:0;border:1px solid #c9e0ef;background:linear-gradient(110deg,#f6fbff,#effaff);border-radius:15px;margin-top:13px;padding:13px 13px 10px}
 #sk4 .persistent-top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 2px 11px;color:#23668b;font-size:12px}
 #sk4 .persist-island-row{display:flex;gap:12px;flex-wrap:wrap;margin:6px 0 12px}
 #sk4 .persist-island{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px;position:relative;border:2px dashed #84c3e4;border-radius:64px;background:#fff;padding:22px 15px 10px;min-height:112px;max-width:100%}
@@ -427,8 +427,7 @@ function board(){
    for(const m of revealMissions)for(const id of m.winners)if(cubeOf(id)&&['popped','progress','done'].includes(cubeOf(id).status))revealCubeIds.add(id);
  }
  const hasReveal=revealCubeIds.size>0,ids=[...revealCubeIds];
- $('#view').innerHTML=`<div class="map"><div class="pop-board-note" id="popBoardNote" hidden aria-live="polite">🎉 POP! キューブが「みんなのプロジェクト」に進化したよ！</div>${qs.map(zone).join('')}${zone(null)}</div>
- ${persistentProjectArea()}
+ $('#view').innerHTML=`<div class="map"><div class="pop-board-note" id="popBoardNote" hidden aria-live="polite">🎉 POP! キューブが「みんなのプロジェクト」に進化したよ！</div>${qs.map(zone).join('')}${zone(null)}${persistentProjectArea()}</div>
  <div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube → 🔺 みんなのプロジェクト</span></div>`;
  if(hasReveal){
   const accountAtReveal=currentAccount;
