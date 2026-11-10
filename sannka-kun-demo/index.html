@@ -60,12 +60,39 @@ function splitIdea(ideaId){
  saveDemo();return true;
 }
 
-const defaultNG=['死ね','しね','殺す','ころす','消えろ','くたばれ'];
+const defaultNG=['死ね','しね','死んで','しんで','殺す','殺し','殺せ','殺そう','殺され','ころす','ころし','ころせ','ころそう','ころされ','消えろ','くたばれ'];
 let facilityNG=[];
 try{const v=JSON.parse(localStorage.getItem('sannka_ngword_demo_v1')||'[]');if(Array.isArray(v))facilityNG=v.filter(x=>typeof x==='string'&&x.length<=30)}catch(e){}
 function saveNG(){try{localStorage.setItem('sannka_ngword_demo_v1',JSON.stringify(facilityNG))}catch(e){}}
 function normalized(text){return String(text||'').normalize('NFKC').toLowerCase().replace(/[\s　、。．・_＿ー～~！!？?\-]/g,'')}
 function findNG(text){const n=normalized(text);return [...new Set([...defaultNG,...facilityNG].filter(w=>w&&n.includes(normalized(w))))]}
+
+/* すべての公開テキストに共通の審査ロジックを適用 */
+if(!Array.isArray(db.pendingNames))db.pendingNames=[];
+function scanExistingText(){
+ for(const q of db.surveys){
+  if(q.status==='active'){
+   const hits=findNG(q.text);
+   if(hits.length){q.status='pending';q.ngHits=hits;}
+  }
+ }
+ for(const i of db.ideas){
+  if(i.status==='approved'){
+   const hits=findNG(i.text);
+   if(hits.length){i.status='pending';i.ngHits=hits;}
+  }
+ }
+ for(const g of db.groups){
+  if(!g.hidden&&findNG(g.name).length){
+   const hits=findNG(g.name);
+   g.hidden=true;
+   if(!db.pendingNames.some(x=>x.gid===g.id&&x.legacy)){
+    db.pendingNames.push({id:'pn'+(++seq),gid:g.id,name:g.name,ngHits:hits,legacy:true});
+   }
+  }
+ }
+}
+if(db.ngRulesVersion!==2){scanExistingText();db.ngRulesVersion=2;saveDemo();}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
 function bubble(g){let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9));let q=survey(g.sid);return `<button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${g.id}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>`}
 function zone(q){
@@ -84,8 +111,8 @@ let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';
 return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${islands}${unlinked}</div>`;
 }
 function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}</div>`}
-function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending');let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">承認</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');if(!text)text='<div class="empty">承認待ちはありません。</div>'}if(tab==='ng'){
-text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。差別的な意見を排除するためではなく、安全上の確認に限定します。引用・相談も誤検出される場合があります。</div>`;
+function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending'),pn=db.pendingNames||[];let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">公開する</button><button class="btn danger small" data-act="rejectSurvey" data-id="${q.id}">非公開</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');text+=pn.map(n=>`<div class="entry"><div><b>グループ名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の名称変更</div></div><button class="btn primary small" data-act="approveName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectName" data-id="${safe(n.id)}">見送り</button></div>`).join('');if(!text)text='<div class="empty">保留中の項目はありません。</div>'}if(tab==='ng'){
+text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。アンケートの問い・アンケート回答・自由発意・グループ名を同じ辞書で判定します。通常は即時公開、NG該当時だけ一時保留です。引用・相談文が誤検出されることもあるため職員が判断します。</div>`;
 }
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
@@ -102,7 +129,7 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
  +ideas.map(i=>`<div class="entry"><div class="grow"><div class="entry-name">${safe(i.text)}</div><div class="mini">所属バブル：${safe(group(i.gid)?.name||'未分類')}</div></div><button class="btn small" data-act="attachIdea" data-id="${i.id}">同じ島にする</button></div>`).join('')
  }
 
-$('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
+$('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
 function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span><button class="btn primary" data-act="create">＋ アンケート作成</button>`;view==='board'?board():manager()}
 function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="modal"><div class="modalHead"><b class="brand">SANNKA-KUN</b><button class="btn small" data-act="close">閉じる ×</button></div>${text}</div></div>`}
 function close(){$('#dialog').replaceChildren()}
@@ -151,17 +178,30 @@ if(ideaId&&splitIdea(ideaId)){close();view='board';render()}
 return;
 }
 if(a==='like'){let g=group(id);if(!g)return;g.likes+=liked.has(id)?-1:1;liked.has(id)?liked.delete(id):liked.add(id);render();act('detail',id);return}
+if(a==='rejectSurvey'){let q=survey(id);if(q){q.status='rejected';render()}return}
+if(a==='approveName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g){g.name=n.name;g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
+if(a==='rejectName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g&&n.legacy){g.name='確認済みの発意';g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
 if(a==='approveSurvey'){let q=survey(id);if(q){q.status='active';if(q.start>day(0))q.start=day(0);if(q.end<day(0))q.end=day(7)}render();return}
 if(a==='approveIdea'){let i=db.ideas.find(i=>i.id===id);if(!i)return;publishIdea(i);render();return}
 if(a==='rejectIdea'){let i=db.ideas.find(i=>i.id===id);if(i)i.status='rejected';render();return}
-if(a==='addNGWord'){let word=$('#addNGWord')?.value.trim();if(!word)return;const target=normalized(word);if(!target||[...defaultNG,...facilityNG].some(x=>normalized(x)===target)){alert('同じNGワードが登録されています');return}facilityNG.push(word.slice(0,30));saveNG();render();return}
+if(a==='addNGWord'){let word=$('#addNGWord')?.value.trim();if(!word)return;const target=normalized(word);if(!target||[...defaultNG,...facilityNG].some(x=>normalized(x)===target)){alert('同じNGワードが登録されています');return}facilityNG.push(word.slice(0,30));saveNG();scanExistingText();render();return}
 if(a==='removeNGWord'){let ix=Number(id);if(Number.isInteger(ix)&&ix>=0&&ix<facilityNG.length){facilityNG.splice(ix,1);saveNG();render()}return}
 if(a==='hideIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='approved'){i.status='hidden';let g=group(i.gid);if(g&&!db.ideas.some(x=>x.gid===g.id&&x.status==='approved'))g.hidden=true;}render();return}
-if(a==='restoreIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='hidden'){i.status='approved';let g=group(i.gid);if(g)g.hidden=false;}render();return}
+if(a==='restoreIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='hidden'){const hits=findNG(i.text);i.ngHits=hits;if(hits.length){i.status='pending'}else{i.status='approved';let g=group(i.gid);if(g)g.hidden=false;}}render();return}
 if(a==='archive'){let q=survey(id);if(q)q.status='archived';render();return}
 if(a==='history'){let q=survey(id);if(!q)return;let li=db.ideas.filter(i=>i.sid===id&&i.status==='approved');popup(`<h3>アンケートの履歴</h3><div class="notice"><b>${safe(q.text)}</b><br>${safe(q.start)}〜${safe(q.end)}<br>承認済み ${li.length}件</div>${li.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}`);return}
 if(a==='rename'){let g=group(id);popup(`<h3>グループ名の変更</h3><div class="field"><label>グループ名</label><input id="renameText" value="${safe(g.name)}"></div><div class="actions"><button class="btn primary" data-act="saveName" data-id="${id}">変更する</button></div>`);return}
-if(a==='saveName'){let g=group(id),name=$('#renameText')?.value.trim();if(g&&name)g.name=name;close();render();return}}
+if(a==='saveName'){
+ let g=group(id),name=$('#renameText')?.value.trim();if(!g||!name){$('#renameText')?.focus();return}
+ const hits=findNG(name);
+ if(hits.length){
+  db.pendingNames=db.pendingNames.filter(x=>x.gid!==g.id||x.legacy);
+  db.pendingNames.push({id:'pn'+(++seq),gid:g.id,name,ngHits:hits,legacy:false});
+  saveDemo();
+  popup(`<h3>グループ名を確認中です</h3><div class="notice">NGワードを検出したため、変更はまだ公開していません。現在の名前のまま職員確認待ちになります。</div><div class="actions"><button class="btn" data-act="board">ボードに戻る</button><button class="btn primary" data-act="manage">保留一覧へ</button></div>`);
+ }else{g.name=name;close();render()}
+ return
+}}
 root.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a.dataset.id);return}const r=e.target.closest('[data-role]');if(r){role=r.dataset.role;render();return}const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;render();return}});
 root.addEventListener('change',e=>{if(e.target.id==='src'){selection=e.target.value;render();return}if(e.target.dataset.move){let i=db.ideas.find(x=>x.id===e.target.dataset.move);if(i){i.gid=e.target.value;render()}}});
 root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
