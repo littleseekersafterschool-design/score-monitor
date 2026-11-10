@@ -296,16 +296,29 @@ function cubeListView(){
  const list=db.cubes.filter(c=>['proposed','mission','popped','progress','done'].includes(c.status));
  $('#view').innerHTML=`<div class="panel"><h3>🧊 Project Cube</h3><div class="inline-info">みんなの「やりたい」から生まれた具体的な企画です。発意・いいね・ミッションの投票は、それぞれ役割が異なります。</div>${list.map(cubeBlock).join('')||'<div class="empty">キューブはまだありません。発意のバブルを押して企画を提案してみよう！</div>'}</div>`;
 }
+
+function inboxView(){
+ const messages=inboxItems(),name=demoAccounts.find(a=>a.id===currentAccount)?.name||'こども';
+ $('#view').innerHTML=`<div class="panel"><h3>✉ ${safe(name)}のおしらせ</h3><p class="inline-info">施設からの投票イベントや結果は、あなたのアカウントに届きます。発意ボードとは別の場所です。</p>
+ <div class="mail-grid">${messages.map(msg=>{const m=activeMission(msg.id),result=msg.type==='result';return `<button class="mail-item ${msg.read?'':'unread'}" data-act="openMail" data-id="${safe(msg.id+'|'+msg.type)}">
+ <span class="mail-envelope">${result?'🎉':'✉️'}</span><span style="flex:1"><span class="mail-subject">${safe(messageTitle(m,msg.type))}</span><br><span class="mail-preview">${result?'みんなの投票結果が届きました。開いてPOPを見よう！':safe(m.title||'この企画を実現したい？')+' ｜ '+(m.status==='open'?'投票受付中':'投票は終了しています')}</span></span>${msg.read?'':'<span class="inbox-count">●</span>'}</button>`}).join('')||'<div class="empty">おしらせはまだありません。職員体験からミッションを送ると、ここに届きます。</div>'}</div></div>`;
+}
 function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending'),pn=db.pendingNames||[],pins=db.pendingIslandNames||[],pc=db.cubes.filter(c=>c.status==='pending');let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">公開する</button><button class="btn danger small" data-act="rejectSurvey" data-id="${q.id}">非公開</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');text+=pn.map(n=>`<div class="entry"><div><b>グループ名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の名称変更</div></div><button class="btn primary small" data-act="approveName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectName" data-id="${safe(n.id)}">見送り</button></div>`).join('');
 text+=pins.map(n=>`<div class="entry"><div><b>島名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の島名確認</div></div><button class="btn primary small" data-act="approveIslandName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectIslandName" data-id="${safe(n.id)}">見送り</button></div>`).join('');text+=pc.map(c=>`<div class="entry"><div><b>🧊 ${safe(c.title)}</b><div class="mini">Project Cube｜検出語：${safe((c.ngHits||[]).join('、'))}</div><div class="inline-info">${safe(c.why||'')}／${safe(c.how||'')}</div></div><button class="btn primary small" data-act="approveCube" data-id="${safe(c.id)}">公開する</button><button class="btn danger small" data-act="rejectCube" data-id="${safe(c.id)}">非公開</button></div>`).join('');if(!text)text='<div class="empty">保留中の項目はありません。</div>'}if(tab==='ng'){
 text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。アンケートの問い・アンケート回答・自由発意・グループ名・島名・Project Cubeの全入力項目を同じ辞書で判定します。通常は即時公開、NG該当時だけ一時保留です。引用・相談文が誤検出されることもあるため職員が判断します。</div>`;
 }
 
 if(tab==='cubes'){
- const list=db.cubes.filter(c=>c.status!=='pending'&&c.status!=='rejected');
- text=`<div class="inline-info">施設が発意に届いた企画書を確認し、必要な場合にのみBubble Pop Mission!を開催します。いいねは共感、Powerは実行への意思表示です。</div>`
- +list.map(c=>`<div class="cube-card"><div class="cube-head"><div><div class="cube-title">🧊 ${safe(c.title)}</div><div class="mini">元のバブル：${safe(group(c.gid)?.name||'不明')} ／ 💜 ${c.likes||0} いいね</div></div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div>${c.status==='mission'?meter(c):''}<div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容を確認</button>${c.status==='mission'?`<button class="btn small" data-act="demoBoost" data-id="${safe(c.id)}">⚡ デモ：応援+1</button>`:''}${c.status==='proposed'?`<button class="btn primary small" data-act="missionStart" data-id="${safe(c.id)}">📣 ミッションを発動</button>`:''}${c.status==='mission'?`<button class="btn small" data-act="missionStop" data-id="${safe(c.id)}">ミッションを終了</button>`:''}${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">🚀 実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了にする</button>`:''}${c.status==='progress'||c.status==='popped'?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援を編集</button>`:''}<button class="btn small ${c.status==='hidden'?'':'danger'}" data-act="${c.status==='hidden'?'restoreCube':'hideCube'}" data-id="${safe(c.id)}">${c.status==='hidden'?'再表示':'非表示'}</button></div></div>`).join('')
- ||'<div class="empty">Project Cube はまだありません。こども体験で発意のバブルから提案してみよう！</div>';
+ const recent=[...db.missions].reverse();
+ const cubes=db.cubes.filter(c=>!['pending','rejected'].includes(c.status));
+ text=`<div class="entry" style="margin-top:3px"><div><b>📣 Power to Pop Mission!｜施設から配信</b><div class="mini">ここで作成した投票はこどもの「おしらせ」に届きます。発意ボードには表示しません。</div></div><button class="btn primary" data-act="newMission">＋ ミッションを作成</button></div>`
+ +recent.map(m=>`<div class="cube-card"><div class="cube-head"><div class="cube-title">📬 ${safe(m.title)}</div><span class="cube-status ${m.status==='results_sent'?'popped':'mission'}">${m.status==='open'?'投票受付中':m.status==='closed'?'集計・結果確認中':'結果送信済み'}</span></div>
+ <div class="mini">1人 ${m.perUserVotes} 票まで ／ 認定する上位 ${m.winnerCount} 件 ／ 締切 ${safe(m.deadline)}</div>
+ <div class="inline-info" style="margin-top:6px">投票した人数：${Object.keys(m.ballots||{}).length}人　・　候補：${m.candidates.length}件</div>
+ <div class="actions">${m.status==='open'?`<button class="btn small" data-act="closeVoting" data-id="${safe(m.id)}">投票受付を終了</button>`:''}
+ <button class="btn ${m.status==='results_sent'?'':'primary'} small" data-act="reviewMission" data-id="${safe(m.id)}">${m.status==='results_sent'?'送信済み結果を確認':'集計・結果を確認'}</button></div></div>`).join('')
+ +`<div class="inline-info" style="margin-top:20px;font-weight:800">🧊 キューブから認定プロジェクトへ</div>`
+ +cubes.map(c=>`<div class="entry"><div><b>${['popped','progress','done'].includes(c.status)?'🔺':'🧊'} ${safe(c.title)}</b><div class="mini">${safe(cubeStatus(c))}　・　💜 ${c.likes||0} いいね</div></div><div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">内容</button>${c.status==='popped'?`<button class="btn primary small" data-act="markProgress" data-id="${safe(c.id)}">実行準備へ</button>`:''}${c.status==='progress'?`<button class="btn primary small" data-act="markDone" data-id="${safe(c.id)}">実行完了</button>`:''}${['popped','progress'].includes(c.status)?`<button class="btn small" data-act="taskEdit" data-id="${safe(c.id)}">役割・支援</button>`:''}</div></div>`).join('');
 }
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
@@ -325,8 +338,19 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
  }
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length+pins.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
-function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;view==='board'?board():view==='cubes'?cubeListView():manager()}
-
+function render(){
+ saveDemo();
+ $('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;
+ const accountPicker=role==='child'?`<select id="demoAccount" class="user-select" aria-label="デモのこどもアカウントを選択">${demoAccounts.map(a=>`<option value="${safe(a.id)}" ${a.id===currentAccount?'selected':''}>${safe(a.name)}</option>`).join('')}</select>`:'';
+ const mailbox=role==='child'?`<button class="btn" data-act="inbox">✉ おしらせ ${unreadCount()?`<span class="inbox-count">${unreadCount()}</span>`:''}</button>`:'';
+ $('#toolbar').innerHTML=view==='board'
+ ?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`
+ :`<button class="btn" data-act="board">← 発意ボードへ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;
+ if(view==='board')board();
+ else if(view==='cubes')cubeListView();
+ else if(view==='inbox')inboxView();
+ else manager();
+}
 function fxReduced(){return typeof window!=='undefined'&&typeof window.matchMedia==='function'&&window.matchMedia('(prefers-reduced-motion: reduce)').matches}
 function fxReact(anchor,kind='heart'){
  if(!anchor||fxReduced()||typeof document.createElement!=='function')return;
@@ -356,7 +380,7 @@ function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="mo
 function close(){$('#dialog').replaceChildren()}
 function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
 function suggest(s){let r=[['サッカー',/サッカー|フットサル|ボール/],['ゲーム大会',/ゲーム|switch|スイッチ/i],['お菓子づくり',/お菓子|おかし|クッキー|ケーキ/],['工作',/工作|段ボール|秘密基地/],['虫取り',/虫|昆虫|生き物/],['魚を飼う',/魚|水槽|金魚/]];return r.find(x=>x[1].test(s))?.[0]||s.slice(0,12)}
-function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
+function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='inbox'){close();role='child';view='inbox';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
 if(a==='create'){popup(`<h3>みんなに問いかける</h3><div class="field"><label>アンケートの問い</label><input id="questionText" maxlength="120" placeholder="例：次のイベントは何をしたい？"></div><div class="two"><div class="field"><label>公開開始日</label><input id="qStart" type="date" value="${day(0)}"></div><div class="field"><label>公開終了日</label><input id="qEnd" type="date" value="${day(7)}"></div></div><div class="actions"><button class="btn primary" type="button" data-act="postQuestion">問いを投稿する</button></div>`);return}
 if(a==='postIdea'){let t=$('#ideaText')?.value.trim();if(!t){$('#ideaText')?.focus();return}let hits=findNG(t),i={id:'i'+(++seq),sid:id||null,gid:null,text:t,status:hits.length?'pending':'approved',authorId:'demo-child',ngHits:hits};db.ideas.push(i);if(!hits.length)publishIdea(i);complete(false,hits.length>0);return}
 if(a==='postQuestion'){let t=$('#questionText')?.value.trim(),st=$('#qStart')?.value,en=$('#qEnd')?.value;if(!t){$('#questionText')?.focus();return}if(!st||!en||en<st){alert('公開期間を確認してください');return}let num=db.surveys.length;let hits=findNG(t);db.surveys.push({id:'s'+(++seq),label:num<26?String.fromCharCode(65+num):String(num+1),text:t,start:st,end:en,status:hits.length?'pending':'active',ngHits:hits});complete(true,hits.length>0);return}
@@ -438,22 +462,17 @@ if(a==='submitCube'){
 }
 if(a==='cubeDetail'){
  const c=cubeOf(id);if(!c)return;
- const g=group(c.gid);
- const show=['proposed','mission','popped','progress','done'].includes(c.status);
+ const g=group(c.gid),isProject=['popped','progress','done'].includes(c.status);
+ const show=['proposed','popped','progress','done'].includes(c.status);
  if(!show&&role!=='staff')return;
- popup(`<div class="brand">PROJECT CUBE</div><h3>🧊 ${safe(c.title)}</h3>
+ popup(`<div class="brand">${isProject?'EVERYONE’S PROJECT':'PROJECT CUBE'}</div><h3>${isProject?'🔺':'🧊'} ${safe(c.title)}</h3>
  <div class="inline-info"><span class="badge">${cubeStatus(c)}</span>　元のバブル：${safe(g?.name||'不明')}</div>
  <div class="field"><label>どうしてやりたい？</label><div class="notice">${safe(c.why||'これから考える')}</div></div>
  <div class="field"><label>どうやってやる？</label><div class="notice">${safe(c.how||'これから考える')}</div></div>
- <div class="field"><label>リーダーにお願いしたいこと</label><div class="notice">${safe(c.support||'今はありません')}</div></div>
- <div class="inline-info">💜 ${c.likes||0} いいね！　<span class="badge">いいね＝共感</span></div>
- ${c.status==='mission'?`<div class="mission-banner"><b>📣 Bubble Pop Mission!</b>${meter(c)}<div class="inline-info">投票期限：${safe(c.deadline||'未設定')}</div></div>`:''}
- ${['popped','progress','done'].includes(c.status)?`<div class="success">🎉 POP!　みんなのプロジェクトとして誕生しました。<div class="inline-info">役割・支援：${safe(c.tasks||'これから決める')}</div></div>`:''}
- <div class="actions"><button class="btn" data-act="cubeList">キューブ一覧</button><button class="btn" data-act="cubeLike" data-id="${safe(c.id)}">${c.myLiked?'💜 いいね済み':'♡ いいね！'}</button>
- ${c.status==='mission'?`<button class="btn primary" data-act="power" data-id="${safe(c.id)}" ${c.myPowered?'disabled':''}>${c.myPowered?'⚡ 送信済み':'⚡ Power to Pop!'}</button>`:''}
- ${role==='staff'&&c.status==='proposed'?`<button class="btn primary" data-act="missionStart" data-id="${safe(c.id)}">📣 ミッションを発動</button>`:''}
- ${role==='staff'&&c.status==='popped'?`<button class="btn primary" data-act="markProgress" data-id="${safe(c.id)}">🚀 実行準備へ</button>`:''}
- </div>`);
+ <div class="field"><label>必要なサポート</label><div class="notice">${safe(c.support||'今はありません')}</div></div>
+ <div class="inline-info">💜 ${c.likes||0} いいね！　<span class="badge">いいね＝共感（投票ではありません）</span></div>
+ ${isProject?`<div class="result-podium"><span class="triangle-symbol">▲</span><div><b>みんなのプロジェクト！</b><div class="inline-info">施設からのミッション結果で認定され、キューブが三角に変わりました。</div><div class="inline-info">役割・支援：${safe(c.tasks||'これから決める')}</div></div></div>`:''}
+ <div class="actions"><button class="btn" data-act="cubeList">一覧へ戻る</button><button class="btn primary" data-act="cubeLike" data-id="${safe(c.id)}">${c.myLiked?'💜 いいね済み':'♡ いいね！'}</button></div>`);
  return;
 }
 if(a==='cubeLike'){
