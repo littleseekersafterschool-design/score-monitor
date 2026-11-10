@@ -104,6 +104,13 @@
 #sk4 .vote-stepper button{width:34px;height:34px;padding:2px;display:inline-grid;place-items:center;border-radius:50%}
 #sk4 .vote-stepper button:disabled{opacity:.37;cursor:not-allowed}
 #sk4 .mail-vote-allocations{margin-top:10px}
+
+#sk4 .map{position:relative}
+#sk4 .cube-mini.cube-evolving{animation:skCubeTransform 1.35s cubic-bezier(.17,1.15,.32,1) both;transform-origin:50% 50%}
+#sk4 .pop-board-note{position:absolute;z-index:8;left:50%;top:11px;transform:translateX(-50%);width:min(95%,430px);background:#e3f6ff;border:1px solid #71c7e9;color:#155b8a;box-shadow:0 10px 30px #2c94c82b;border-radius:16px;text-align:center;padding:10px 14px;font-size:13px;font-weight:900}
+#sk4 .pop-board-note[hidden]{display:none}
+@keyframes skCubeTransform{0%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%);transform:scale(.88) rotate(-10deg);border-radius:12px;filter:brightness(1)}40%{transform:scale(1.18) rotate(12deg);filter:brightness(1.2)}100%{clip-path:polygon(50% 0,98% 94%,2% 94%);transform:scale(1) rotate(0);border-radius:0;filter:brightness(1)}}
+@media(prefers-reduced-motion:reduce){#sk4 .cube-mini.cube-evolving{animation:none;clip-path:polygon(50% 0,98% 94%,2% 94%)}}
 </style>
 <div class="app"><header><div class="brand-row"><img class="brand-avatar" src="data:image/webp;base64,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" alt="さんかくんのキャラクターロゴ"><div><div class="brand">SANNKA-KUN! · BUBBLE WORLD</div><h2>みんなの発意ボード 🫧</h2><div class="muted">Little.Seekers｜Bubble 操作モック</div></div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
@@ -333,10 +340,11 @@ function scanExistingText(){
 }
 if(db.ngRulesVersion!==4){scanExistingText();cubeSanitizeExisting();db.ngRulesVersion=4;saveDemo();}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
+let revealCubeIds=new Set();
 function bubble(g){
  let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
  let cubes=cubeAttached(g.id);
- return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6)),project=['popped','progress','done'].includes(c.status);return `<button class="cube-mini ${project?'project':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">${project?'▲':'▣'} <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
+ return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6)),project=['popped','progress','done'].includes(c.status)&&!revealCubeIds.has(c.id);return `<button class="cube-mini ${project?'project':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">${project?'▲':'▣'} <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
 }
 function zone(q){
 let id=q?q.id:null;
@@ -353,7 +361,34 @@ let unlinked=list.filter(g=>!used.has(g.id)).map(bubble).join('');
 let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';
 return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${islands}${unlinked}</div>`;
 }
-function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube</span></div>`}
+function board(){
+ let qs=db.surveys.filter(active),revealMissions=[];
+ revealCubeIds=new Set();
+ if(role==='child'&&typeof window!=='undefined'){
+   revealMissions=db.missions.filter(m=>m.status==='results_sent'&&m.winners?.length&&!m.boardViewed?.[currentAccount]);
+   for(const m of revealMissions)for(const id of m.winners)if(cubeOf(id)&&['popped','progress','done'].includes(cubeOf(id).status))revealCubeIds.add(id);
+ }
+ const hasReveal=revealCubeIds.size>0,ids=[...revealCubeIds];
+ $('#view').innerHTML=`<div class="map"><div class="pop-board-note" id="popBoardNote" hidden aria-live="polite">🎉 POP! キューブが「みんなのプロジェクト」に進化したよ！</div>${qs.map(zone).join('')}${zone(null)}</div>
+ <div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube → 🔺 みんなのプロジェクト</span></div>`;
+ if(hasReveal){
+  for(const m of revealMissions){m.boardViewed=m.boardViewed||{};m.boardViewed[currentAccount]=true;}
+  saveDemo();
+  if(typeof window.setTimeout==='function')window.setTimeout(()=>{
+   if(view!=='board'||role!=='child')return;
+   for(const id of ids){
+    const node=root.querySelector('[data-act="cubeDetail"][data-id="'+id+'"]');
+    const c=cubeOf(id);
+    if(!node||!c)continue;
+    node.classList.add('project','cube-evolving');
+    node.innerHTML='▲ <small>♥ '+(c.likes||0)+'</small>';
+   }
+   const notice=$('#popBoardNote');
+   if(notice){notice.hidden=false;window.setTimeout(()=>{notice.hidden=true},3000)}
+  },350);
+ }
+ revealCubeIds=new Set();
+}
 function cubeListView(){
  const list=db.cubes.filter(c=>['proposed','mission','popped','progress','done'].includes(c.status));
  $('#view').innerHTML=`<div class="panel"><h3>🧊 Project Cube</h3><div class="inline-info">みんなの「やりたい」から生まれた具体的な企画です。発意・いいね・ミッションの投票は、それぞれ役割が異なります。</div>${list.map(cubeBlock).join('')||'<div class="empty">キューブはまだありません。発意のバブルを押して企画を提案してみよう！</div>'}</div>`;
