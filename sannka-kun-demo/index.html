@@ -9,7 +9,7 @@
 
 #sk4 .cube-mark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:#e8e4ff;color:#6a4ea2;line-height:1;font-size:13px}
 #sk4 .bubble-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;min-width:74px}
-#sk4 .cube-mini{border:1px solid #bbaee8;background:#f4f0ff;color:#5b468b;border-radius:9px;padding:4px 8px;font-size:10px;font-weight:800;max-width:136px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 2px 8px rgba(89,72,144,.08)}
+#sk4 .cube-mini{border:1.6px solid #bbaee8;background:#f4f0ff;color:#5b468b;border-radius:12px;padding:3px;font-size:16px;font-weight:850;display:inline-flex;flex-direction:column;justify-content:center;align-items:center;line-height:1.12;flex:none;box-shadow:0 2px 8px rgba(89,72,144,.08);transition:width .25s,height .25s,transform .18s}.cube-mini small{font-size:9px;font-weight:800}.cube-mini:hover{transform:translateY(-3px)}
 #sk4 .cube-mini.mission{background:#fff3de;border-color:#f1be69;color:#9c5d13}
 #sk4 .cube-mini.popped{background:#e9f8ef;border-color:#9bd9b5;color:#187347}
 #sk4 .cube-card{border:1px solid #ded7f6;border-radius:15px;padding:13px;background:linear-gradient(135deg,#fff,#f6f2ff);box-shadow:0 3px 12px #36215c0a;margin-top:9px}
@@ -183,7 +183,7 @@ function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.s
 function bubble(g){
  let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
  let cubes=cubeAttached(g.id);
- return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.length?`<button class="cube-mini ${cubes.some(x=>x.status==='mission')?'mission':cubes.some(x=>x.status==='popped')?'popped':''}" data-act="cubeDetail" data-id="${safe(cubes[0].id)}" title="${safe(cubes.map(x=>x.title).join('／'))}">🧊 ${cubes.length>1?'Cube ×'+cubes.length:'Project Cube'}</button>`:''}</div>`;
+ return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.map(c=>{let sz=Math.min(76,Math.max(43,43+Math.sqrt(Math.max(0,c.likes||0))*6));return `<button class="cube-mini ${c.status==='mission'?'mission':['popped','progress','done'].includes(c.status)?'popped':''}" data-act="cubeDetail" data-id="${safe(c.id)}" title="${safe(c.title)}（♥ ${c.likes||0}）" style="width:${sz}px;height:${sz}px">▣ <small>♥ ${c.likes||0}</small></button>`}).join('')}</div>`;
 }
 function zone(q){
 let id=q?q.id:null;
