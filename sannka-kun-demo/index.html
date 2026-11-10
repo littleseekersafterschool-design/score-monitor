@@ -6,6 +6,33 @@
 #sk4 .island-label{position:absolute;top:-12px;left:15px;border:1px solid #a4d4c6;background:#fff;color:#276a5f;border-radius:99px;padding:2px 10px;font-size:10px;line-height:1.6;white-space:nowrap;font-weight:800;max-width:calc(100% - 30px);overflow:hidden;text-overflow:ellipsis;box-shadow:0 2px 6px rgba(29,110,92,.10);pointer-events:none;opacity:1}
 #sk4 .island .bubble{flex:none}#sk4 .qnode{background:#0f8275;color:#fff;border:0;border-radius:50%;width:79px;height:79px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:11px;font-weight:850;flex:none}#sk4 .qnode b{font-size:24px;line-height:1.2}#sk4 .bubble{border-radius:50%;width:var(--sz);height:var(--sz);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:3px;line-height:1.3;padding:8px;border:2px solid var(--line);background:var(--bg);color:var(--fg);flex:none;transition:transform .2s,background .2s}#sk4 .bubble:hover,#sk4 .qnode:hover{transform:scale(1.04)}#sk4 .bubble b{font-size:12px}#sk4 .bubble small{font-weight:800;font-size:11px}#sk4 .legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}#sk4 .legend span{font-size:10px;color:#607976;display:flex;align-items:center;gap:4px}#sk4 .sw{width:11px;height:11px;border-radius:50%;border:1px solid #b6c9c3}#sk4 .panel{border:1px solid #dfeae5;border-radius:14px;padding:16px}#sk4 .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0}#sk4 .tabs button{border-radius:9px;border:1px solid #d8e7e1;background:#fff;padding:8px 10px;color:#607b76;font-size:11px}#sk4 .tabs button.sel{background:#e7f4ef;color:#116b5d;border-color:#88bcad;font-weight:800}#sk4 .entry{padding:11px 0;border-bottom:1px solid #e8eeeb;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}#sk4 .entry:last-child{border-bottom:0}#sk4 .entry b{font-size:12px}#sk4 .mini{font-size:10px;color:#748d86}#sk4 .field{display:grid;gap:6px;margin:12px 0}#sk4 .field label{font-size:12px;font-weight:750}#sk4 .field input,#sk4 .field select,#sk4 .field textarea{background:#fff;color:#203b37;border:1px solid #ccded7;padding:11px;border-radius:9px;width:100%;font-size:13px}#sk4 .field textarea{min-height:100px;resize:vertical}#sk4 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}#sk4 .actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:16px}#sk4 .overlay{position:fixed;inset:0;z-index:999;background:#0a302ebd;display:flex;align-items:center;justify-content:center;padding:14px}#sk4 .modal{background:white;border-radius:17px;padding:21px;width:min(480px,100%);max-height:85vh;overflow:auto;box-shadow:0 15px 50px #12342b50}#sk4 .modal h3{font-size:20px;margin:8px 0 10px}#sk4 .modalHead{display:flex;justify-content:space-between;align-items:center}#sk4 .notice{border:1px solid #bbe4d2;background:#eef9f3;padding:12px 13px;border-radius:10px;font-size:12px}#sk4 .foot{font-size:10px;color:#7d928e;margin-top:11px}#sk4 .empty{padding:23px;text-align:center;color:#79928d}#sk4 select.sm{padding:7px;border-radius:8px;border:1px solid #c8d9d3;background:#fff;max-width:160px;font-size:11px}
 @media(max-width:530px){#sk4 .map{grid-template-columns:1fr}#sk4 .group.free{grid-column:auto}#sk4 .two{grid-template-columns:1fr}#sk4 .bubble{width:calc(var(--sz)*.86);height:calc(var(--sz)*.86)}#sk4 .group{min-height:165px}#sk4 .app{border-radius:11px}}
+
+#sk4 .cube-mark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:#e8e4ff;color:#6a4ea2;line-height:1;font-size:13px}
+#sk4 .bubble-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex:none;min-width:74px}
+#sk4 .cube-mini{border:1px solid #bbaee8;background:#f4f0ff;color:#5b468b;border-radius:9px;padding:4px 8px;font-size:10px;font-weight:800;max-width:136px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 2px 8px rgba(89,72,144,.08)}
+#sk4 .cube-mini.mission{background:#fff3de;border-color:#f1be69;color:#9c5d13}
+#sk4 .cube-mini.popped{background:#e9f8ef;border-color:#9bd9b5;color:#187347}
+#sk4 .cube-card{border:1px solid #ded7f6;border-radius:15px;padding:13px;background:linear-gradient(135deg,#fff,#f6f2ff);box-shadow:0 3px 12px #36215c0a;margin-top:9px}
+#sk4 .cube-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#sk4 .cube-title{font-size:14px;font-weight:850}
+#sk4 .cube-status{border-radius:999px;padding:3px 9px;font-size:10px;background:#e8e4f8;color:#674c9b;font-weight:750;white-space:nowrap}
+#sk4 .cube-status.mission{background:#ffedcc;color:#a36514}
+#sk4 .cube-status.popped,#sk4 .cube-status.progress,#sk4 .cube-status.done{background:#ddf5e8;color:#1c7a55}
+#sk4 .meter{border-radius:20px;background:#e2e7e6;height:12px;overflow:hidden;border:1px solid #d6e2de;margin:10px 0 5px}
+#sk4 .meter > span{display:block;height:100%;background:linear-gradient(90deg,#14a48d,#62cfb3);border-radius:20px;transition:width .3s}
+#sk4 .mission-banner{background:linear-gradient(110deg,#e8f7f4,#fff3d5);border:1px solid #b8ded4;border-radius:14px;padding:12px 14px;margin-bottom:13px}
+#sk4 .mission-items{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+#sk4 .mission-entry{flex:1;min-width:180px;background:#fffdf8;border:1px solid #e2d8c5;border-radius:11px;padding:9px;text-align:left}
+#sk4 .mission-entry b{display:block;font-size:12px}
+#sk4 .mission-entry span{font-size:10px;color:#67857c}
+#sk4 .cube-emoji{font-size:22px;line-height:1}
+#sk4 .pop-scene{text-align:center;background:radial-gradient(circle,#e4faeb,#e9f5ff);border:1px solid #a9ded0;border-radius:18px;padding:25px 12px;margin:14px 0;animation:skPop .6s ease-out}
+#sk4 .pop-scene .big-pop{font-size:42px;font-weight:950;color:#08786c;letter-spacing:2px}
+@keyframes skPop{0%{transform:scale(.55);opacity:.1}65%{transform:scale(1.07);opacity:1}100%{transform:scale(1)}}
+#sk4 .inline-info{font-size:11px;color:#67847d;line-height:1.65}
+#sk4 .badge{border-radius:999px;background:#f0f7f5;padding:3px 8px;font-size:10px;color:#3d776a;font-weight:750}
+#sk4 .cube-link{display:inline-flex;gap:5px;align-items:center}
+@media(max-width:530px){#sk4 .bubble-wrap{min-width:65px}#sk4 .cube-mini{font-size:9px;max-width:110px}}
 </style>
 <div class="app"><header><div><div class="brand">SANNKA-KUN</div><h2>みんなの発意ボード</h2><div class="muted">Little.Seekers｜操作モック・サンプルデータ</div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
@@ -81,6 +108,38 @@ function splitIdea(ideaId){
  saveDemo();return true;
 }
 
+
+/* Bubble / Project Cube MVP: AIは使用せず、発意データと公開済みキューブを接続する */
+if(!Array.isArray(db.cubes)){
+ db.cubes=[
+ {id:'cube-sample-a',gid:'g1',title:'みんなでサッカー大会を開こう',why:'みんなで試合を楽しみたい',how:'チームを考えて、日時とルールを決める',support:'会場・安全確認',status:'mission',likes:7,myLiked:false,powers:2,myPowered:false,goal:6,deadline:'2099-12-31',tasks:'チーム分けとルール決め',createdBy:'demo-child'},
+ {id:'cube-sample-b',gid:'g7',title:'水槽の生き物を育てよう',why:'生き物のことを学びたい',how:'育てたい魚を相談し、当番を決める',support:'道具と飼い方の相談',status:'proposed',likes:4,myLiked:false,powers:0,myPowered:false,goal:6,deadline:'2099-12-31',tasks:'',createdBy:'demo-child'}
+ ].filter(c=>db.groups.some(g=>g.id===c.gid));
+}
+function cubeOf(id){return db.cubes.find(c=>c.id===id)}
+function cubeStatus(c){return ({proposed:'企画アイデア',mission:'ミッション中',popped:'POP！実行待ち',progress:'実行中',done:'実行完了',pending:'職員の確認待ち',hidden:'非表示',rejected:'非公開'})[c.status]||c.status}
+function visibleCubes(gid){return db.cubes.filter(c=>c.gid===gid&&['proposed','mission','popped','progress','done'].includes(c.status))}
+function cubeAttached(gid){return visibleCubes(gid).sort((a,b)=>(a.status==='mission'?-2:a.status==='popped'?-1:0)-(b.status==='mission'?-2:b.status==='popped'?-1:0))}
+function meter(c){let percent=Math.min(100,Math.round(100*(c.powers||0)/Math.max(1,c.goal||6)));return `<div class="meter" aria-label="投票の達成度 ${percent}%"><span style="width:${percent}%"></span></div><div class="inline-info">⚡ ${c.powers||0} / ${c.goal||6} パワー　（${percent}%）</div>`}
+function cubeBlock(c){
+ const g=group(c.gid),canVote=c.status==='mission';
+ return `<div class="cube-card"><div class="cube-head"><div class="cube-title"><span class="cube-mark">▣</span> ${safe(c.title)}</div><span class="cube-status ${safe(c.status)}">${cubeStatus(c)}</span></div><div class="mini">元のバブル：${safe(g?.name||'不明')}</div><div class="inline-info" style="margin-top:6px">💜 ${c.likes||0} いいね！</div>${canVote?meter(c):''}<div class="actions"><button class="btn small" data-act="cubeDetail" data-id="${safe(c.id)}">キューブを見る</button>${canVote?`<button class="btn primary small" data-act="power" data-id="${safe(c.id)}" ${c.myPowered?'disabled':''}>${c.myPowered?'⚡ 送信済み':'⚡ パワーを送る！'}</button>`:''}</div></div>`;
+}
+function cubeFormCheck(values){return [...new Set(values.flatMap(x=>findNG(x||'')))]}
+function missionBanner(){
+ const activeM=db.cubes.filter(c=>c.status==='mission'&&group(c.gid)&&(!group(c.gid).sid||active(survey(group(c.gid).sid)||{})));
+ if(!activeM.length)return '';
+ return `<div class="mission-banner"><b>📣 Bubble Pop Mission!</b><div class="inline-info">みんなのパワーで、企画をプロジェクトへ！</div><div class="mission-items">${activeM.map(c=>`<button class="mission-entry" data-act="cubeDetail" data-id="${safe(c.id)}"><b>🧊 ${safe(c.title)}</b><span>⚡ ${c.powers||0} / ${c.goal||6}　パワー</span></button>`).join('')}</div></div>`;
+}
+function cubeSanitizeExisting(){
+ for(const c of db.cubes){
+  if(['proposed','mission','popped','progress','done'].includes(c.status)){
+    const hits=cubeFormCheck([c.title,c.why,c.how,c.support,c.tasks]);
+    if(hits.length){c.status='pending';c.ngHits=hits;}
+  }
+ }
+}
+
 const defaultNG=['死ね','しね','死んで','しんで','殺す','殺し','殺せ','殺そう','殺され','ころす','ころし','ころせ','ころそう','ころされ','消えろ','くたばれ'];
 let facilityNG=[];
 try{const v=JSON.parse(localStorage.getItem('sannka_ngword_demo_v1')||'[]');if(Array.isArray(v))facilityNG=v.filter(x=>typeof x==='string'&&x.length<=30)}catch(e){}
@@ -119,9 +178,13 @@ function scanExistingText(){
   }
  }
 }
-if(db.ngRulesVersion!==3){scanExistingText();db.ngRulesVersion=3;saveDemo();}
+if(db.ngRulesVersion!==4){scanExistingText();cubeSanitizeExisting();db.ngRulesVersion=4;saveDemo();}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
-function bubble(g){let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9));let q=survey(g.sid);return `<button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${g.id}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>`}
+function bubble(g){
+ let c=color(g.likes),n=Math.min(118,Math.max(68,66+Math.sqrt(Math.max(0,g.likes))*9)),q=survey(g.sid);
+ let cubes=cubeAttached(g.id);
+ return `<div class="bubble-wrap"><button class="bubble" title="${safe(g.name+'／'+(q?q.text:'自由発意')+'／いいね '+g.likes)}" data-act="detail" data-id="${safe(g.id)}" style="--sz:${n}px;--bg:${c[0]};--line:${c[1]};--fg:${c[2]}"><b>${safe(g.name)}</b><small>♥ ${g.likes}</small>${groupCount(g.id)>1?`<small>${groupCount(g.id)}件の発意</small>`:''}</button>${cubes.length?`<button class="cube-mini ${cubes.some(x=>x.status==='mission')?'mission':cubes.some(x=>x.status==='popped')?'popped':''}" data-act="cubeDetail" data-id="${safe(cubes[0].id)}" title="${safe(cubes.map(x=>x.title).join('／'))}">🧊 ${cubes.length>1?'Cube ×'+cubes.length:'Project Cube'}</button>`:''}</div>`;
+}
 function zone(q){
 let id=q?q.id:null;
 let list=db.groups.filter(g=>g.sid===id&&!g.hidden&&groupCount(g.id)>0);
@@ -137,7 +200,11 @@ let unlinked=list.filter(g=>!used.has(g.id)).map(bubble).join('');
 let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';
 return `<div class="group ${q?'':'free'}" style="--line:${q?'#b6d4da':'#b0d6b8'};--wash:${q?'#e9f5f780':'#e5f5e880'}"><button class="qnode" title="${safe(tip)}" data-act="${q?'answer':'free'}" data-id="${q?safe(q.id):''}"><b>${q?'▤':'✦'}</b>${q?'アンケート '+safe(q.label):'自由な発意'}</button>${islands}${unlinked}</div>`;
 }
-function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}</div>`}
+function board(){let qs=db.surveys.filter(active);$('#view').innerHTML=`${missionBanner()}<div class="map">${qs.map(zone).join('')}${zone(null)}</div><div class="legend">${palette.map(c=>`<span><i class="sw" style="background:${c[0]}"></i>♥ ${c[3]}</span>`).join('')}<span>🧊 Project Cube</span></div>`}
+function cubeListView(){
+ const list=db.cubes.filter(c=>['proposed','mission','popped','progress','done'].includes(c.status));
+ $('#view').innerHTML=`<div class="panel"><h3>🧊 Project Cube</h3><div class="inline-info">みんなの「やりたい」から生まれた具体的な企画です。発意・いいね・ミッションの投票は、それぞれ役割が異なります。</div>${list.map(cubeBlock).join('')||'<div class="empty">キューブはまだありません。発意のバブルを押して企画を提案してみよう！</div>'}</div>`;
+}
 function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending'),pn=db.pendingNames||[],pins=db.pendingIslandNames||[];let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">公開する</button><button class="btn danger small" data-act="rejectSurvey" data-id="${q.id}">非公開</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');text+=pn.map(n=>`<div class="entry"><div><b>グループ名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の名称変更</div></div><button class="btn primary small" data-act="approveName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectName" data-id="${safe(n.id)}">見送り</button></div>`).join('');
 text+=pins.map(n=>`<div class="entry"><div><b>島名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の島名確認</div></div><button class="btn primary small" data-act="approveIslandName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectIslandName" data-id="${safe(n.id)}">見送り</button></div>`).join('');if(!text)text='<div class="empty">保留中の項目はありません。</div>'}if(tab==='ng'){
 text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。アンケートの問い・アンケート回答・自由発意・グループ名を同じ辞書で判定します。通常は即時公開、NG該当時だけ一時保留です。引用・相談文が誤検出されることもあるため職員が判断します。</div>`;
@@ -160,7 +227,7 @@ if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.
  }
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length+pins.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
-function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span><button class="btn primary" data-act="create">＋ アンケート作成</button>`;view==='board'?board():manager()}
+function render(){saveDemo();$('#roles').innerHTML=`<button data-role="child" class="${role==='child'?'active':''}">こども体験</button><button data-role="staff" class="${role==='staff'?'active':''}">職員体験</button>`;$('#toolbar').innerHTML=view==='board'?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`:`<button class="btn" data-act="board">← 発意ボードへ</button><span class="push"></span>${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;view==='board'?board():view==='cubes'?cubeListView():manager()}
 function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="modal"><div class="modalHead"><b class="brand">SANNKA-KUN</b><button class="btn small" data-act="close">閉じる ×</button></div>${text}</div></div>`}
 function close(){$('#dialog').replaceChildren()}
 function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
