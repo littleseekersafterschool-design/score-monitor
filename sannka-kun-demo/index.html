@@ -246,7 +246,7 @@ const originalDemoData=JSON.parse(JSON.stringify(db));
 try{
  const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
  if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
-  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;db.powerMissionVersion=old.powerMissionVersion;
+  db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;db.powerMissionVersion=old.powerMissionVersion;db.individualBubbleVersion=old.individualBubbleVersion;
   const nums=[...db.surveys,...db.groups,...db.ideas,...db.islands,...(db.cubes||[]),...(db.missions||[]),...db.pendingNames,...db.pendingIslandNames].map(x=>Number((String(x.id||'').match(/\d+$/)||[])[0])||0);
   seq=Math.max(seq,...nums);
  }
@@ -261,8 +261,32 @@ for(const idea of db.ideas){
  }
  seenIdeaIds.add(idea.id);
 }
+/* One post equals one bubble. Split previously combined ideas without changing the total likes. */
+let individualBubbleMigrated=false;
+if(db.individualBubbleVersion!==1){
+ for(const g of [...db.groups]){
+  const items=db.ideas.filter(i=>i.gid===g.id&&i.status!=='rejected');
+  if(!items.length)continue;
+  const totalLikes=Math.max(0,Number(g.likes)||0);
+  const baseLikes=Math.floor(totalLikes/items.length);
+  const extraLikes=totalLikes%items.length;
+  items.forEach((idea,index)=>{
+   const label=String(idea.text||'発意').trim().slice(0,16)||'発意';
+   const likes=baseLikes+(index<extraLikes?1:0);
+   if(index===0){
+    g.name=label;g.likes=likes;g.hidden=idea.status!=='approved';
+   }else{
+    const next={id:'g'+(++seq),sid:g.sid,name:label,likes,hidden:idea.status!=='approved'};
+    db.groups.push(next);idea.gid=next.id;
+   }
+  });
+ }
+ db.islands=[];
+ db.individualBubbleVersion=1;
+ individualBubbleMigrated=true;
+}
 function saveDemo(){try{localStorage.setItem('sannka_demo_data_v3',JSON.stringify(db))}catch(e){}}
-if(repairedIdeaIds)saveDemo();
+if(repairedIdeaIds||individualBubbleMigrated)saveDemo();
 function groupCount(gid){return db.ideas.filter(i=>i.gid===gid&&i.status==='approved').length}
 if(!Array.isArray(db.islands))db.islands=[];
 function islandFor(groupId){return db.islands.find(i=>i.members.includes(groupId))}
@@ -529,7 +553,7 @@ function deleteSurveyData(sid){
   return {ideas:ideaCount,groups:groupIds.size,cubes:cubeIds.size};
 }
 function publishIdea(i){
- let name=suggest(i.text);
+ let name=String(i.text||'発意').trim().slice(0,16)||'発意';
  let g={id:'g'+(++seq),sid:i.sid,name,likes:0};
  db.groups.push(g);
  i.status='approved';
