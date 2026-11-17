@@ -491,6 +491,37 @@ function scanExistingText(){
  }
 }
 if(db.ngRulesVersion!==4){scanExistingText();cubeSanitizeExisting();db.ngRulesVersion=4;saveDemo();}
+function deleteSurveyData(sid){
+  const groupIds=new Set(db.groups.filter(g=>g.sid===sid).map(g=>g.id));
+  const islandIds=new Set(db.islands.filter(i=>i.sid===sid||i.members.some(id=>groupIds.has(id))).map(i=>i.id));
+  const cubeIds=new Set((db.cubes||[]).filter(c=>groupIds.has(c.gid)).map(c=>c.id));
+  const ideaCount=db.ideas.filter(i=>i.sid===sid||groupIds.has(i.gid)).length;
+  db.surveys=db.surveys.filter(q=>q.id!==sid);
+  db.ideas=db.ideas.filter(i=>i.sid!==sid&&!groupIds.has(i.gid));
+  db.groups=db.groups.filter(g=>g.sid!==sid);
+  db.islands=db.islands.filter(i=>!islandIds.has(i.id));
+  db.cubes=(db.cubes||[]).filter(c=>!cubeIds.has(c.id)&&!groupIds.has(c.gid));
+  if(Array.isArray(db.missions)){
+    db.missions=db.missions.map(m=>{
+      const candidates=(m.candidates||[]).filter(id=>!cubeIds.has(id));
+      const winners=(m.winners||[]).filter(id=>!cubeIds.has(id));
+      const ballots={};
+      for(const [account,votes] of Object.entries(m.ballots||{})){
+        if(Array.isArray(votes))ballots[account]=votes.filter(id=>!cubeIds.has(id));
+        else if(votes&&typeof votes==='object'){
+          const next={};
+          for(const [cubeId,count] of Object.entries(votes))if(!cubeIds.has(cubeId))next[cubeId]=count;
+          ballots[account]=next;
+        }
+      }
+      return {...m,candidates,winners,ballots};
+    }).filter(m=>(m.candidates||[]).length>0);
+  }
+  db.pendingNames=(db.pendingNames||[]).filter(n=>!groupIds.has(n.gid));
+  db.pendingIslandNames=(db.pendingIslandNames||[]).filter(n=>!islandIds.has(n.islandId));
+  saveDemo();
+  return {ideas:ideaCount,groups:groupIds.size,cubes:cubeIds.size};
+}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
 let revealCubeIds=new Set();
 const pendingBoardReveals=new Set();
@@ -651,7 +682,7 @@ if(tab==='cubes'){
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
 }
-if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}</div>`).join('')};
+if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><div class="actions" style="margin-top:0"><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}<button class="btn danger small" data-act="deleteSurvey" data-id="${q.id}">削除</button></div></div>`).join('')||'<div class="empty">問いかけはまだありません。</div>'};
 
 $('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
 function render(){
@@ -699,7 +730,7 @@ function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="mo
 function close(){$('#dialog').replaceChildren()}
 function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
 function suggest(s){let r=[['サッカー',/サッカー|フットサル|ボール/],['ゲーム大会',/ゲーム|switch|スイッチ/i],['お菓子づくり',/お菓子|おかし|クッキー|ケーキ/],['工作',/工作|段ボール|秘密基地/],['虫取り',/虫|昆虫|生き物/],['魚を飼う',/魚|水槽|金魚/]];return r.find(x=>x[1].test(s))?.[0]||s.slice(0,12)}
-function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='search'){close();view='search';render();return}if(a==='runSearch'){let value=$('#semanticQuery')?.value.trim();if(!value){$('#semanticQuery')?.focus();return}searchQuery=value;view='search';render();return}if(a==='quickSearch'){searchQuery=id||'遊び';view='search';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='inbox'){close();role='child';view='inbox';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
+function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='search'){close();view='search';render();return}if(a==='runSearch'){let value=$('#semanticQuery')?.value.trim();if(!value){$('#semanticQuery')?.focus();return}searchQuery=value;view='search';render();return}if(a==='quickSearch'){searchQuery=id||'遊び';view='search';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='inbox'){close();role='child';view='inbox';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;let deleteButton=q&&role==='staff'?`<button class="btn danger" type="button" data-act="deleteSurvey" data-id="${safe(q.id)}">問いかけを削除</button>`:'';popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions">${deleteButton}<button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
 if(a==='create'){popup(`<h3>みんなに問いかける</h3><div class="field"><label>アンケートの問い</label><input id="questionText" maxlength="120" placeholder="例：次のイベントは何をしたい？"></div><div class="two"><div class="field"><label>公開開始日</label><input id="qStart" type="date" value="${day(0)}"></div><div class="field"><label>公開終了日</label><input id="qEnd" type="date" value="${day(7)}"></div></div><div class="actions"><button class="btn primary" type="button" data-act="postQuestion">問いを投稿する</button></div>`);return}
 if(a==='postIdea'){let t=$('#ideaText')?.value.trim();if(!t){$('#ideaText')?.focus();return}let hits=findNG(t),i={id:'i'+(++seq),sid:id||null,gid:null,text:t,status:hits.length?'pending':'approved',authorId:'demo-child',ngHits:hits};db.ideas.push(i);if(!hits.length)publishIdea(i);complete(false,hits.length>0);return}
 if(a==='postQuestion'){let t=$('#questionText')?.value.trim(),st=$('#qStart')?.value,en=$('#qEnd')?.value;if(!t){$('#questionText')?.focus();return}if(!st||!en||en<st){alert('公開期間を確認してください');return}let num=db.surveys.length;let hits=findNG(t);db.surveys.push({id:'s'+(++seq),label:num<26?String.fromCharCode(65+num):String(num+1),text:t,start:st,end:en,status:hits.length?'pending':'active',ngHits:hits});complete(true,hits.length>0);return}
@@ -892,6 +923,23 @@ if(a==='addNGWord'){let word=$('#addNGWord')?.value.trim();if(!word)return;const
 if(a==='removeNGWord'){let ix=Number(id);if(Number.isInteger(ix)&&ix>=0&&ix<facilityNG.length){facilityNG.splice(ix,1);saveNG();render()}return}
 if(a==='hideIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='approved'){i.status='hidden';let g=group(i.gid);if(g&&!db.ideas.some(x=>x.gid===g.id&&x.status==='approved'))g.hidden=true;}render();return}
 if(a==='restoreIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='hidden'){const hits=findNG(i.text);i.ngHits=hits;if(hits.length){i.status='pending'}else{i.status='approved';let g=group(i.gid);if(g)g.hidden=false;}}render();return}
+if(a==='deleteSurvey'){
+ if(role!=='staff')return;
+ const q=survey(id);if(!q)return;
+ const answerCount=db.ideas.filter(i=>i.sid===id).length;
+ const linkedGroups=db.groups.filter(g=>g.sid===id),linkedGroupIds=new Set(linkedGroups.map(g=>g.id));
+ const cubeCount=(db.cubes||[]).filter(c=>linkedGroupIds.has(c.gid)).length;
+ popup(`<h3>この問いかけを削除しますか？</h3><div class="notice"><b>${safe(q.text)}</b></div><p class="inline-info">この問いかけに紐づく回答 ${answerCount}件、バブル ${linkedGroups.length}件${cubeCount?`、キューブ ${cubeCount}件`:''}も削除されます。この操作は元に戻せません。</p><div class="actions"><button class="btn" data-act="close">キャンセル</button><button class="btn danger" data-act="confirmDeleteSurvey" data-id="${safe(q.id)}">削除する</button></div>`);
+ return;
+}
+if(a==='confirmDeleteSurvey'){
+ if(role!=='staff')return;
+ const q=survey(id);if(!q){close();render();return}
+ const title=q.text,result=deleteSurveyData(id);
+ close();view='manage';tab='surveys';render();
+ popup(`<h3>問いかけを削除しました</h3><div class="notice"><b>${safe(title)}</b><br>関連する回答 ${result.ideas}件も削除しました。</div><div class="actions"><button class="btn primary" data-act="close">閉じる</button></div>`);
+ return;
+}
 if(a==='archive'){let q=survey(id);if(q){q.status='archived';q.archivedAt=new Date().toISOString()}render();return}
 if(a==='history'){let q=survey(id);if(!q)return;let li=db.ideas.filter(i=>i.sid===id&&i.status==='approved');popup(`<h3>アンケートの履歴</h3><div class="notice"><b>${safe(q.text)}</b><br>${safe(q.start)}〜${safe(q.end)}<br>承認済み ${li.length}件</div>${li.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}`);return}
 }
