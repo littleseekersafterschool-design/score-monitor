@@ -194,13 +194,46 @@
   #sk4 .bubble-wrap>.bubble{width:var(--bubble-size,90px);height:var(--bubble-size,90px)}
   #sk4 .bubble-wrap{padding:0;height:calc(var(--bubble-size,90px) + 30px)}
 }
+
+/* AI keyword search board */
+#sk4 .ai-search-btn{border-color:#9dcbea;background:linear-gradient(135deg,#f7fcff,#e8f6ff);color:#136b9f}
+#sk4 .search-shell{border:1px solid #d5e8f5;border-radius:18px;background:linear-gradient(180deg,#fff,#f5fbff);padding:18px}
+#sk4 .search-title-row{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}
+#sk4 .search-title-row h3{font-size:21px;color:#174f72;margin:3px 0}
+#sk4 .search-title-row p{margin:0;color:#68859a;font-size:12px}
+#sk4 .ai-kicker{font-size:9px;letter-spacing:.12em;font-weight:900;color:#2184bd}
+#sk4 .ai-badge{border:1px solid #acd8ef;background:#e8f7ff;color:#126a9c;border-radius:999px;padding:5px 10px;font-size:10px;font-weight:850;white-space:nowrap}
+#sk4 .search-form{display:flex;gap:8px;margin-top:16px}
+#sk4 .search-form input{flex:1;min-width:0;border:1px solid #b9d8e9;background:#fff;border-radius:13px;padding:11px 13px;color:#183f58;font-size:14px}
+#sk4 .search-chips{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0 14px}
+#sk4 .search-chips button{border:1px solid #c9dfec;background:#fff;color:#47738f;border-radius:999px;padding:5px 10px;font-size:10px;font-weight:800}
+#sk4 .search-chips button.active{border-color:#238dc2;background:#e5f5ff;color:#126a9c}
+#sk4 .search-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+#sk4 .search-summary>div{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid #d5e7f1;background:#fff;border-radius:13px;padding:9px}
+#sk4 .search-summary b{font-size:18px;color:#155f8b}
+#sk4 .search-summary span{font-size:9px;color:#7893a4;font-weight:750}
+#sk4 .ai-note{display:flex;gap:10px;align-items:flex-start;border:1px solid #b9deec;background:linear-gradient(110deg,#eaf8ff,#f7fdff);border-radius:14px;padding:11px 13px;margin:12px 0;color:#345d75}
+#sk4 .ai-note b{color:#126a9c;white-space:nowrap;font-size:11px}
+#sk4 .ai-note span{font-size:11px}
+#sk4 .search-map{border:1px solid #d6e9f4;border-radius:20px;padding:20px 15px;background:radial-gradient(circle at 50% 12%,rgba(172,225,255,.38),transparent 34%),radial-gradient(#d5e8f5 .8px,transparent .8px),#f8fcff;background-size:auto,19px 19px;min-height:320px}
+#sk4 .search-core{width:118px;height:118px;border-radius:50%;margin:0 auto 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(circle at 30% 20%,#fff,#bfe9ff 52%,#80c9ed);border:2px solid #72bee4;color:#164f70;box-shadow:0 9px 24px rgba(39,137,190,.18)}
+#sk4 .search-core small,#sk4 .search-core span{font-size:9px;color:#3c7798;font-weight:800}
+#sk4 .search-core b{font-size:19px;line-height:1.35;max-width:94px;word-break:break-word}
+#sk4 .search-cloud{display:flex;justify-content:center;align-items:flex-start;gap:18px;flex-wrap:wrap}
+#sk4 .search-hit{position:relative;width:148px;min-height:174px;padding:25px 8px 9px;border:1px solid rgba(166,207,231,.72);border-radius:44% 56% 48% 52%/58% 44% 56% 42%;background:rgba(255,255,255,.67);display:flex;flex-direction:column;align-items:center;justify-content:center}
+#sk4 .search-hit .bubble-wrap{min-width:0}
+#sk4 .search-match{position:absolute;top:7px;left:50%;transform:translateX(-50%);border-radius:999px;background:#e8f7ff;color:#1b79aa;font-size:9px;font-weight:850;padding:2px 8px;white-space:nowrap}
+#sk4 .search-source{margin-top:7px;text-align:center;color:#6b8799;font-size:9px;line-height:1.45;max-width:132px}
+#sk4 .search-disclaimer{margin-top:10px;color:#8297a5;font-size:9px;text-align:center}
+@media(max-width:530px){#sk4 .search-shell{padding:14px}#sk4 .search-form{flex-wrap:wrap}#sk4 .search-form .btn{width:100%}#sk4 .ai-note{display:block}#sk4 .ai-note b{display:block;margin-bottom:3px}#sk4 .search-hit{width:138px}}
+
 </style>
 <div class="app"><header><div class="brand-row"><img class="brand-avatar" src="data:image/png;base64,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" alt="sankAkun 正式ロゴ"><div><div class="brand">SANNKA-KUN! · BUBBLE WORLD</div><h2>みんなの発意ボード 🫧</h2><div class="muted">Little.Seekers｜Bubble 操作モック</div></div></div><div id="roles" class="toggle"></div></header><main><div class="toolbar" id="toolbar"></div><div id="view"></div><div class="foot">このモック内だけで動作します。実際の施設データには接続しません。</div></main></div><div id="dialog"></div>
 <script>
 (()=>{
 const root=document.getElementById('sk4');if(!root||root.dataset.started)return;root.dataset.started='1';
 const $=s=>root.querySelector(s),safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let role='child',view='board',tab='pending',selection='a',seq=60;
+let role='child',view='board',tab='pending',searchQuery='遊び',seq=60;
 const day=n=>{let d=new Date();d.setDate(d.getDate()+n);return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')};
 const palette=[['#ffffff','#cfdfea','#526c80','0〜4'],['#e8f8ff','#b6dced','#23617c','5〜9'],['#c9edff','#8ecbe8','#185a7d','10〜14'],['#a8dfff','#66b9e7','#174d79','15〜19'],['#83c4f9','#489bdc','#103f6d','20〜24'],['#4e9ced','#2379ce','#ffffff','25〜29'],['#2365c3','#114894','#ffffff','30〜35+']];
 const color=n=>palette[n<=4?0:n<=9?1:n<=14?2:n<=19?3:n<=24?4:n<=29?5:6];
@@ -445,21 +478,6 @@ function scanExistingText(){
    if(hits.length){i.status='pending';i.ngHits=hits;}
   }
  }
- for(const i of db.islands){
-  if(i.name&&findNG(i.name).length){
-    const proposed=i.name;i.name='';db.pendingIslandNames=db.pendingIslandNames||[];
-    if(!db.pendingIslandNames.some(x=>x.islandId===i.id))db.pendingIslandNames.push({id:'pin'+(++seq),islandId:i.id,name:proposed,ngHits:findNG(proposed)});
-  }
- }
- for(const g of db.groups){
-  if(!g.hidden&&findNG(g.name).length){
-   const hits=findNG(g.name);
-   g.hidden=true;
-   if(!db.pendingNames.some(x=>x.gid===g.id&&x.legacy)){
-    db.pendingNames.push({id:'pn'+(++seq),gid:g.id,name:g.name,ngHits:hits,legacy:true});
-   }
-  }
- }
 }
 if(db.ngRulesVersion!==4){scanExistingText();cubeSanitizeExisting();db.ngRulesVersion=4;saveDemo();}
 function publishIdea(i){let name=suggest(i.text),g=db.groups.find(g=>g.sid===i.sid&&g.name===name);if(!g){g={id:'g'+(++seq),sid:i.sid,name,likes:0};db.groups.push(g)}i.status='approved';i.gid=g.id;g.hidden=false}
@@ -530,6 +548,66 @@ function board(){
  }
  revealCubeIds=new Set();
 }
+function semanticLexicon(query){
+  const q=normalized(query);
+  const concepts=[
+    ['遊び','あそび','サッカー','フットサル','ボール','ゲーム','switch','スイッチ','鬼ごっこ','おにごっこ','お祭り','祭り','秘密基地','虫取り'],
+    ['食べ物','食べる','食事','料理','ごはん','お菓子','おかし','クッキー','ケーキ','おやつ'],
+    ['生き物','生物','動物','虫','昆虫','魚','水槽','金魚','捕る','飼う','虫取り'],
+    ['ものづくり','工作','作る','つくる','段ボール','ダンボール','秘密基地','アイロンビーズ'],
+    ['運動','スポーツ','体を動かす','サッカー','フットサル','ボール','鬼ごっこ'],
+    ['イベント','行事','大会','お祭り','祭り','みんなで']
+  ];
+  const terms=new Set(q?[q]:[]);
+  for(const words of concepts){
+    const normalizedWords=words.map(normalized);
+    if(normalizedWords.some(w=>q&&((q.includes(w))||(w.includes(q))))){
+      for(const w of normalizedWords)terms.add(w);
+    }
+  }
+  return [...terms].filter(Boolean);
+}
+function semanticResults(query){
+  const q=normalized(query),terms=semanticLexicon(query);
+  if(!q)return [];
+  return db.groups.filter(g=>{
+    if(g.hidden||groupCount(g.id)===0||shouldBeResidual(g))return false;
+    if(g.sid!==null&&g.sid!==undefined){const s=survey(g.sid);if(!s||!active(s))return false}
+    return true;
+  }).map(g=>{
+    const ideas=db.ideas.filter(i=>i.gid===g.id&&i.status==='approved');
+    const source=g.sid?survey(g.sid):null;
+    const haystack=normalized([g.name,...ideas.map(i=>i.text),source?.text||''].join(' '));
+    let score=haystack.includes(q)?80:0;
+    for(const term of terms)if(term!==q&&haystack.includes(term))score+=14;
+    if(!score)return null;
+    return {g,ideas,source,score};
+  }).filter(Boolean).sort((a,b)=>b.score-a.score||b.g.likes-a.g.likes);
+}
+function searchView(){
+  const query=(searchQuery||'').trim(),results=semanticResults(query);
+  const chips=['遊び','食べ物','生き物','ものづくり','運動'];
+  const totalIdeas=results.reduce((n,r)=>n+r.ideas.length,0);
+  const totalLikes=results.reduce((n,r)=>n+(r.g.likes||0),0);
+  const strongest=[...results].sort((a,b)=>(b.g.likes||0)-(a.g.likes||0)).slice(0,3);
+  const insight=results.length
+    ?`「${safe(query)}」に近い発意では、${strongest.map(r=>'「'+safe(r.g.name)+'」').join('・')}に共感が集まっています。バブルの大きさは「いいね」の大きさです。`
+    :`「${safe(query)}」に近い発意はまだ見つかりませんでした。別の言葉でも探せます。`;
+  const hits=results.map(r=>{
+    const sourceLabel=r.source?'アンケート '+safe(r.source.label)+'｜'+safe(r.source.text):'自由な発意';
+    const closeness=r.score>=80?'とても近い':r.score>=28?'近い':'関連あり';
+    return `<div class="search-hit"><span class="search-match">意味が${closeness}</span>${bubble(r.g)}<div class="search-source">${sourceLabel}<br>${r.ideas.length}件の発意</div></div>`;
+  }).join('');
+  $('#view').innerHTML=`<div class="search-shell">
+    <div class="search-title-row"><div><span class="ai-kicker">✨ AI SEMANTIC SEARCH · MOCK</span><h3>AIキーワード検索ボード</h3><p>言葉が完全に一致しなくても、意味の近い発意バブルをアンケート横断で集めます。</p></div><span class="ai-badge">AI検索モック</span></div>
+    <div class="search-form"><input id="semanticQuery" value="${safe(query)}" maxlength="40" aria-label="探したいキーワード" placeholder="例：遊び、食べ物、生き物"><button class="btn primary" data-act="runSearch">AIで探す</button></div>
+    <div class="search-chips">${chips.map(x=>`<button class="${x===query?'active':''}" data-act="quickSearch" data-id="${safe(x)}">${safe(x)}</button>`).join('')}</div>
+    ${results.length?`<div class="search-summary"><div><b>${results.length}</b><span>関連バブル</span></div><div><b>${totalIdeas}</b><span>発意</span></div><div><b>♥ ${totalLikes}</b><span>共感</span></div></div>`:''}
+    <div class="ai-note"><b>AIが見つけた民意のまとまり</b><span>${insight}</span></div>
+    <div class="search-map">${results.length?`<div class="search-core"><small>検索テーマ</small><b>${safe(query)}</b><span>意味で集める</span></div><div class="search-cloud">${hits}</div>`:'<div class="empty">別のキーワードを入力して検索してください。</div>'}</div>
+    <div class="search-disclaimer">この画面は機能モックです。実装時はAIが発意本文とアンケートの文脈を読み取り、関連度を判定します。</div>
+  </div>`;
+}
 function cubeListView(){
  const list=db.cubes.filter(c=>['proposed','mission','popped','progress','done'].includes(c.status));
  $('#view').innerHTML=`<div class="panel"><h3>🧊 Project Cube</h3><div class="inline-info">みんなの「やりたい」から生まれた具体的な企画です。発意・いいね・ミッションの投票は、それぞれ役割が異なります。</div>${list.map(cubeBlock).join('')||'<div class="empty">キューブはまだありません。発意のバブルを押して企画を提案してみよう！</div>'}</div>`;
@@ -541,9 +619,8 @@ function inboxView(){
  <div class="mail-grid">${messages.map(msg=>{const m=activeMission(msg.id),result=msg.type==='result';return `<button class="mail-item ${msg.read?'':'unread'}" data-act="openMail" data-id="${safe(msg.id+'|'+msg.type)}">
  <span class="mail-envelope">${result?'🎉':'✉️'}</span><span style="flex:1"><span class="mail-subject">${safe(messageTitle(m,msg.type))}</span><br><span class="mail-preview">${result?'みんなの投票結果が届きました。開いてPOPを見よう！':safe(m.title||'この企画を実現したい？')+' ｜ '+(m.status==='open'?'投票受付中':'投票は終了しています')}</span></span>${msg.read?'':'<span class="inbox-count">●</span>'}</button>`}).join('')||'<div class="empty">おしらせはまだありません。職員体験からミッションを送ると、ここに届きます。</div>'}</div></div>`;
 }
-function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending'),pn=db.pendingNames||[],pins=db.pendingIslandNames||[],pc=db.cubes.filter(c=>c.status==='pending');let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">公開する</button><button class="btn danger small" data-act="rejectSurvey" data-id="${q.id}">非公開</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');text+=pn.map(n=>`<div class="entry"><div><b>グループ名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の名称変更</div></div><button class="btn primary small" data-act="approveName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectName" data-id="${safe(n.id)}">見送り</button></div>`).join('');
-text+=pins.map(n=>`<div class="entry"><div><b>島名：${safe(n.name)}</b><div class="mini">NGワード検出：${safe((n.ngHits||[]).join('、'))}／公開前の島名確認</div></div><button class="btn primary small" data-act="approveIslandName" data-id="${safe(n.id)}">承認</button><button class="btn danger small" data-act="rejectIslandName" data-id="${safe(n.id)}">見送り</button></div>`).join('');text+=pc.map(c=>`<div class="entry"><div><b>🧊 ${safe(c.title)}</b><div class="mini">Project Cube｜検出語：${safe((c.ngHits||[]).join('、'))}</div><div class="inline-info">${safe(c.why||'')}／${safe(c.how||'')}</div></div><button class="btn primary small" data-act="approveCube" data-id="${safe(c.id)}">公開する</button><button class="btn danger small" data-act="rejectCube" data-id="${safe(c.id)}">非公開</button></div>`).join('');if(!text)text='<div class="empty">保留中の項目はありません。</div>'}if(tab==='ng'){
-text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。アンケートの問い・アンケート回答・自由発意・グループ名・島名・Project Cubeの全入力項目を同じ辞書で判定します。通常は即時公開、NG該当時だけ一時保留です。引用・相談文が誤検出されることもあるため職員が判断します。</div>`;
+function manager(){let ps=db.surveys.filter(q=>q.status==='pending'),pi=db.ideas.filter(i=>i.status==='pending'),pc=db.cubes.filter(c=>c.status==='pending');let text='';if(tab==='pending'){text=ps.map(q=>`<div class="entry"><div><b>問い：${safe(q.text)}</b><div class="mini">NGワード検出：${safe((q.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveSurvey" data-id="${q.id}">公開する</button><button class="btn danger small" data-act="rejectSurvey" data-id="${q.id}">非公開</button></div>`).join('')+pi.map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.sid?'アンケート回答':'自由発意'}・NGワード検出：${safe((i.ngHits||[]).join('、'))}</div></div><button class="btn primary small" data-act="approveIdea" data-id="${i.id}">承認</button><button class="btn danger small" data-act="rejectIdea" data-id="${i.id}">非公開</button></div>`).join('');text+=pc.map(c=>`<div class="entry"><div><b>🧊 ${safe(c.title)}</b><div class="mini">Project Cube｜検出語：${safe((c.ngHits||[]).join('、'))}</div><div class="inline-info">${safe(c.why||'')}／${safe(c.how||'')}</div></div><button class="btn primary small" data-act="approveCube" data-id="${safe(c.id)}">公開する</button><button class="btn danger small" data-act="rejectCube" data-id="${safe(c.id)}">非公開</button></div>`).join('');if(!text)text='<div class="empty">保留中の項目はありません。</div>'}if(tab==='ng'){
+text=`<div style="font-size:13px;font-weight:850;margin-bottom:7px">標準NGワード（変更不可）</div><div class="mini" style="line-height:2.2">${defaultNG.map(x=>`<span style="display:inline-block;padding:2px 9px;margin:2px;background:#edf3f0;border-radius:20px">${safe(x)}</span>`).join('')}</div><div class="field"><label>施設で追加するNGワード</label><input id="addNGWord" maxlength="30" placeholder="例：施設で保留対象にしたい表現"></div><button class="btn primary small" data-act="addNGWord">＋ NGワードを追加</button><div style="margin-top:12px">${facilityNG.map((x,i)=>`<div class="entry"><b>${safe(x)}</b><button class="btn danger small" data-act="removeNGWord" data-id="${i}">削除</button></div>`).join('')||'<div class="mini">施設独自のNGワードはまだありません。</div>'}</div><div class="notice" style="margin-top:12px">NGワードに一致しない投稿は即時公開。一致した投稿だけ職員確認待ちになります。アンケートの問い・アンケート回答・自由発意・Project Cubeの各入力項目を同じ辞書で判定します。通常は即時公開、NG該当時だけ一時保留です。引用・相談文が誤検出されることもあるため職員が判断します。</div>`;
 }
 
 if(tab==='cubes'){
@@ -563,21 +640,9 @@ if(tab==='cubes'){
 if(tab==='posts'){
 text=db.ideas.filter(i=>i.status==='approved'||i.status==='hidden').map(i=>`<div class="entry"><div><b>${safe(i.text)}</b><div class="mini">${i.status==='approved'?'公開中':'非表示'}｜投稿者：${safe(i.authorId||'demo-child')}｜${i.sid?'アンケート回答':'自由発意'}</div></div><button class="btn small ${i.status==='approved'?'danger':''}" data-act="${i.status==='approved'?'hideIdea':'restoreIdea'}" data-id="${safe(i.id)}">${i.status==='approved'?'非表示にする':'再表示'}</button></div>`).join('')||'<div class="empty">該当する投稿はありません。</div>';
 }
-if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}</div>`).join('')};if(tab==='groups'){
- let sources=[...db.surveys.filter(x=>x.status!=='archived').map(x=>({id:x.id,label:'アンケート '+x.label})),{id:'free',label:'自由な発意'}];
- if(!sources.some(x=>x.id===selection))selection=sources[0]?.id||'free';
- const sid=selection==='free'?null:selection;
- const gs=db.groups.filter(g=>g.sid===sid&&groupCount(g.id)>0);
- const ideas=db.ideas.filter(i=>i.sid===sid&&i.status==='approved');
- const activeIslands=db.islands.filter(i=>i.sid===sid && i.members.filter(mid=>gs.some(g=>g.id===mid)).length>=2);
- text=`<div class="field"><label>編集するアンケート・発意</label><select id="src">${sources.map(x=>`<option value="${x.id}" ${selection===x.id?'selected':''}>${safe(x.label)}</option>`).join('')}</select></div><div class="mini">丸はそれぞれ独立したまま、関連するものを同じ「島」で囲みます。いいね数と元の発意はそのまま残ります。</div>`
- +(activeIslands.length?`<div class="mini" style="margin-top:16px;font-weight:800">島の名前（ボードには小さなタグで表示）</div>${activeIslands.map(i=>`<div class="entry"><div><b># ${safe(islandName(i))}</b><div class="mini">${safe(i.members.map(id=>group(id)?.name).filter(Boolean).join('・'))}</div></div><button class="btn small" data-act="renameIsland" data-id="${i.id}">島名を変更</button></div>`).join('')}`:'')
- +gs.map(g=>`<div class="entry"><div><b>${safe(g.name)}　♥ ${g.likes}</b><div class="mini">発意 ${groupCount(g.id)}件 ${islandFor(g.id)?'／ 関連する島に所属':''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn small" data-act="rename" data-id="${g.id}">名前変更</button>${gs.length>1?`<button class="btn primary small" data-act="attachHere" data-id="${g.id}">ここにまとめる</button>`:''}${islandFor(g.id)?`<button class="btn small" data-act="unlinkIsland" data-id="${g.id}">島から外す</button>`:''}${groupCount(g.id)>1?`<button class="btn small" data-act="chooseSplit" data-id="${g.id}">別バブルに分ける</button>`:''}</div></div>`).join('')
- +`<div style="font-size:12px;font-weight:800;margin-top:18px">個別の発意を関連付ける</div>`
- +ideas.map(i=>`<div class="entry"><div class="grow"><div class="entry-name">${safe(i.text)}</div><div class="mini">所属バブル：${safe(group(i.gid)?.name||'未分類')}</div></div><button class="btn small" data-act="attachIdea" data-id="${i.id}">同じ島にする</button></div>`).join('')
- }
+if(tab==='surveys'){text=db.surveys.map(q=>`<div class="entry"><div><b>${safe(q.text)}</b><div class="mini">${q.start} 〜 ${q.end}｜${q.status==='archived'?'アーカイブ':active(q)?'公開中':'公開待ち・期限外'}</div></div><button class="btn small" data-act="history" data-id="${q.id}">履歴</button>${active(q)?`<button class="btn small" data-act="archive" data-id="${q.id}">終了</button>`:''}</div>`).join('')};
 
-$('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pn.length+pins.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="groups" class="${tab==='groups'?'sel':''}">グループ編集</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
+$('#view').innerHTML=`<div class="panel"><b>管理画面</b><div class="tabs"><button data-tab="pending" class="${tab==='pending'?'sel':''}">保留中 ${ps.length+pi.length+pc.length}件</button><button data-tab="ng" class="${tab==='ng'?'sel':''}">NGワード設定</button><button data-tab="posts" class="${tab==='posts'?'sel':''}">投稿管理</button><button data-tab="cubes" class="${tab==='cubes'?'sel':''}">🧊 キューブ・ミッション</button><button data-tab="surveys" class="${tab==='surveys'?'sel':''}">アンケート・履歴</button></div>${text}</div>`}
 function render(){
  expireSurveys();
  saveDemo();
@@ -585,10 +650,11 @@ function render(){
  const accountPicker=role==='child'?`<select id="demoAccount" class="user-select" aria-label="デモのこどもアカウントを選択">${demoAccounts.map(a=>`<option value="${safe(a.id)}" ${a.id===currentAccount?'selected':''}>${safe(a.name)}</option>`).join('')}</select>`:'';
  const mailbox=role==='child'?`<button class="btn" data-act="inbox">✉ おしらせ ${unreadCount()?`<span class="inbox-count">${unreadCount()}</span>`:''}</button>`:'';
  $('#toolbar').innerHTML=view==='board'
- ?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn" data-act="cubeList">🧊 キューブ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`
+ ?`<button class="btn" data-act="free">＋ 自由に発意する</button><button class="btn primary" data-act="create">＋ みんなに問いかける</button><button class="btn ai-search-btn" data-act="search">✨ AIキーワード検索</button><button class="btn" data-act="cubeList">🧊 キューブ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`
  :`<button class="btn" data-act="board">← 発意ボードへ</button>${mailbox}<span class="push"></span>${accountPicker}${role==='staff'?'<button class="btn" data-act="manage">管理画面</button>':''}`;
  settleExpiredMissions();
  if(view==='board')board();
+ else if(view==='search')searchView();
  else if(view==='cubes')cubeListView();
  else if(view==='inbox')inboxView();
  else manager();
@@ -622,61 +688,11 @@ function popup(text){$('#dialog').innerHTML=`<div class="overlay"><div class="mo
 function close(){$('#dialog').replaceChildren()}
 function complete(isQuestion,held){saveDemo();popup(`<h3>${held?'投稿を確認中です':isQuestion?'問いを公開しました！':'発意を公開しました！'}</h3><div class="notice">${held?'確認が必要な言葉を検出したため、投稿を受け付けて一時保留にしました。職員が確認するまで他のこどもには表示されません。':'投稿が完了し、発意ボードに反映されました。施設による事前承認はありません。'}</div><div class="actions"><button class="btn primary" data-act="board">発意ボードへ</button>${held?'<button class="btn" data-act="manage">職員の保留一覧を見る</button>':''}</div>`)}
 function suggest(s){let r=[['サッカー',/サッカー|フットサル|ボール/],['ゲーム大会',/ゲーム|switch|スイッチ/i],['お菓子づくり',/お菓子|おかし|クッキー|ケーキ/],['工作',/工作|段ボール|秘密基地/],['虫取り',/虫|昆虫|生き物/],['魚を飼う',/魚|水槽|金魚/]];return r.find(x=>x[1].test(s))?.[0]||s.slice(0,12)}
-function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='inbox'){close();role='child';view='inbox';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
+function act(a,id){if(a==='close'){close();return}if(a==='board'){close();view='board';render();return}if(a==='search'){close();view='search';render();return}if(a==='runSearch'){let value=$('#semanticQuery')?.value.trim();if(!value){$('#semanticQuery')?.focus();return}searchQuery=value;view='search';render();return}if(a==='quickSearch'){searchQuery=id||'遊び';view='search';render();return}if(a==='manage'){close();view='manage';role='staff';tab='pending';render();return}if(a==='inbox'){close();role='child';view='inbox';render();return}if(a==='cubeList'){close();view='cubes';render();return}if(a==='free'||a==='answer'){let q=a==='answer'?survey(id):null;popup(`<h3>${q?safe(q.text):'自由に発意する'}</h3><div class="muted">自分の言葉で意見を投稿してください。</div><div class="field"><label>やりたいこと・アイデア</label><textarea id="ideaText" maxlength="300" placeholder="やってみたいことを書いてね"></textarea></div><div class="actions"><button class="btn primary" type="button" data-act="postIdea" data-id="${q?q.id:''}">投稿する</button></div>`);return}
 if(a==='create'){popup(`<h3>みんなに問いかける</h3><div class="field"><label>アンケートの問い</label><input id="questionText" maxlength="120" placeholder="例：次のイベントは何をしたい？"></div><div class="two"><div class="field"><label>公開開始日</label><input id="qStart" type="date" value="${day(0)}"></div><div class="field"><label>公開終了日</label><input id="qEnd" type="date" value="${day(7)}"></div></div><div class="actions"><button class="btn primary" type="button" data-act="postQuestion">問いを投稿する</button></div>`);return}
 if(a==='postIdea'){let t=$('#ideaText')?.value.trim();if(!t){$('#ideaText')?.focus();return}let hits=findNG(t),i={id:'i'+(++seq),sid:id||null,gid:null,text:t,status:hits.length?'pending':'approved',authorId:'demo-child',ngHits:hits};db.ideas.push(i);if(!hits.length)publishIdea(i);complete(false,hits.length>0);return}
 if(a==='postQuestion'){let t=$('#questionText')?.value.trim(),st=$('#qStart')?.value,en=$('#qEnd')?.value;if(!t){$('#questionText')?.focus();return}if(!st||!en||en<st){alert('公開期間を確認してください');return}let num=db.surveys.length;let hits=findNG(t);db.surveys.push({id:'s'+(++seq),label:num<26?String.fromCharCode(65+num):String(num+1),text:t,start:st,end:en,status:hits.length?'pending':'active',ngHits:hits});complete(true,hits.length>0);return}
-if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="inline-info" style="margin-top:12px">🧊 このバブルへのProject Cube</div>${visibleCubes(id).map(cubeBlock).join('')||'<div class="inline-info">まだキューブは届いていません。</div>'}<div class="actions"><button class="btn primary" data-act="cubeForm" data-id="${id}">🧊 キューブを提案する</button>${role==='staff'?`<button class="btn" data-act="attachHere" data-id="${id}">別のバブルをこの島にくっつける</button>`:''}<button class="btn" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
-
-if(a==='attachHere'){
- let g=group(id);if(!g)return;
- let options=db.groups.filter(x=>x.id!==g.id&&x.sid===g.sid&&groupCount(x.id)>0);
- popup(`<h3>「${safe(g.name)}」と同じ島にする</h3><div class="muted">2つのバブルは1つに統合されず、それぞれ別の丸のまま同じ島に並びます。いいね数も個別に残ります。</div>${options.length?`<div class="field"><label>同じ島にするバブル</label><select id="mergeSource">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件・♥ ${x.likes}）</option>`).join('')}</select></div><div class="field"><label>島の名前（任意）</label><input id="islandNameInput" maxlength="30" value="${safe(islandFor(g.id)?.name||'')}" placeholder="例：ごっこ遊び"></div><div class="actions"><button class="btn primary" data-act="confirmMerge" data-id="${g.id}">同じグループにする</button></div>`:'<div class="notice">同じアンケート内に、まだ他のグループがありません。</div>'}`);
- return;
-}
-if(a==='confirmMerge'){
- let from=$('#mergeSource')?.value, desired=$('#islandNameInput')?.value.trim();
- if(addToIsland(from,id)){const island=islandFor(id);const okay=desired?setIslandName(island,desired):true;close();view='board';render();if(!okay)popup('<h3>島名は確認待ちです</h3><div class="notice">NGワードに該当したため、島の名前だけを公開保留にしました。島自体は作成され、職員の保留一覧で確認できます。</div><div class="actions"><button class="btn primary" data-act="board">戻る</button></div>')}
- return;
-}
-if(a==='attachIdea'){
- let idea=db.ideas.find(x=>x.id===id),from=group(idea?.gid);
- if(!idea)return;
- let options=db.groups.filter(g=>g.sid===idea.sid&&g.id!==idea.gid&&groupCount(g.id)>0);
- popup(`<h3>同じグループにする</h3><div class="notice">「${safe(idea.text)}」</div><div class="muted" style="margin-top:9px">元の文章とバブルは移動・統合せず、関連する丸として近くに置きます。</div>${options.length?`<div class="field"><label>関連させる先のバブル</label><select id="attachTarget">${options.map(x=>`<option value="${x.id}">${safe(x.name)}（発意 ${groupCount(x.id)}件）</option>`).join('')}</select></div><div class="field"><label>島の名前（任意）</label><input id="islandNameInput" maxlength="30" placeholder="例：ごっこ遊び"></div><div class="actions"><button class="btn primary" data-act="confirmAttachIdea" data-id="${id}">このグループにする</button></div>`:'<div class="notice">同じアンケート内に、移動できる別グループがありません。</div>'}`);
- return;
-}
-if(a==='confirmAttachIdea'){
- let target=$('#attachTarget')?.value, desired=$('#islandNameInput')?.value.trim();
- let idea=db.ideas.find(i=>i.id===id);if(idea&&addToIsland(idea.gid,target)){const island=islandFor(target);const okay=desired?setIslandName(island,desired):true;close();view='board';render();if(!okay)popup('<h3>島名は確認待ちです</h3><div class="notice">NGワードに該当した島名だけを保留しました。</div><div class="actions"><button class="btn primary" data-act="board">戻る</button></div>')}
- return;
-}
-
-
-if(a==='renameIsland'){
- const island=db.islands.find(i=>i.id===id);if(!island)return;
- popup(`<h3>島の名前を変更</h3><div class="muted">名前は島の上部に小さなタグで表示されます。丸の名前やいいね数は変更されません。</div><div class="field"><label>島の名前</label><input id="renameIslandText" maxlength="30" value="${safe(island.name||'')}" placeholder="例：ごっこ遊び"></div><div class="actions"><button class="btn primary" data-act="saveIslandName" data-id="${safe(island.id)}">名前を保存</button></div>`);
- return;
-}
-if(a==='saveIslandName'){
- const island=db.islands.find(i=>i.id===id),name=$('#renameIslandText')?.value.trim();if(!island)return;
- if(!name){island.name='';close();render();return}
- const okay=setIslandName(island,name);close();render();
- if(!okay)popup('<h3>島名は確認待ちです</h3><div class="notice">NGワードに該当したため名前の変更を保留しました。既存の名前は維持されます。</div><div class="actions"><button class="btn primary" data-act="manage">保留一覧を見る</button></div>');
- return;
-}
-if(a==='unlinkIsland'){if(removeFromIsland(id)){view='board';render()}return}
-if(a==='chooseSplit'){
-let g=group(id);if(!g)return;
-let ideas=db.ideas.filter(i=>i.gid===id&&i.status==='approved');
-popup(`<h3>別のバブルに分ける</h3><div class="muted">以前に1つの丸へまとめた回答を分け直すことができます。ただし当時のいいねの配分は復元できません。</div><div class="field"><label>別バブルに戻す発意</label><select id="splitTarget">${ideas.map(i=>`<option value="${i.id}">${safe(i.text)}</option>`).join('')}</select></div><div class="actions"><button class="btn primary" data-act="confirmSplit">分ける</button></div>`);
-return;
-}
-if(a==='confirmSplit'){
-let ideaId=$('#splitTarget')?.value;
-if(ideaId&&splitIdea(ideaId)){close();view='board';render()}
-return;
-}
+if(a==='detail'){let g=group(id);if(!g)return;let originals=db.ideas.filter(i=>i.gid===id&&i.status==='approved');popup(`<h3>${safe(g.name)}</h3><div class="muted">♥ ${g.likes} いいね ／ 発意 ${originals.length}件</div>${originals.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}<div class="inline-info" style="margin-top:12px">🧊 このバブルへのProject Cube</div>${visibleCubes(id).map(cubeBlock).join('')||'<div class="inline-info">まだキューブは届いていません。</div>'}<div class="actions"><button class="btn primary" data-act="cubeForm" data-id="${id}">🧊 キューブを提案する</button><button class="btn" data-act="like" data-id="${id}">${liked.has(id)?'♥ いいねを取り消す':'♡ いいね！'}</button></div>`);return}
 
 /* 新しい発意体験 Bubble → Grow → Set → Cube → Mission → POP */
 if(a==='cubeForm'){
@@ -858,10 +874,6 @@ if(a==='restoreCube'){
 }
 if(a==='like'){let g=group(id);if(!g)return;const adding=!liked.has(id);g.likes+=adding?1:-1;adding?liked.add(id):liked.delete(id);render();act('detail',id);if(adding)fxReact($('#dialog [data-act="like"]')||$('[data-act="detail"][data-id="'+id+'"]'));return}
 if(a==='rejectSurvey'){let q=survey(id);if(q){q.status='rejected';render()}return}
-if(a==='approveName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g){g.name=n.name;g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
-if(a==='rejectName'){let n=db.pendingNames.find(x=>x.id===id);if(!n)return;let g=group(n.gid);if(g&&n.legacy){g.name='確認済みの発意';g.hidden=false}db.pendingNames=db.pendingNames.filter(x=>x.id!==id);render();return}
-if(a==='approveIslandName'){let n=db.pendingIslandNames.find(x=>x.id===id);if(!n)return;let island=db.islands.find(x=>x.id===n.islandId);if(island)island.name=n.name;db.pendingIslandNames=db.pendingIslandNames.filter(x=>x.id!==id);render();return}
-if(a==='rejectIslandName'){db.pendingIslandNames=db.pendingIslandNames.filter(x=>x.id!==id);render();return}
 if(a==='approveSurvey'){let q=survey(id);if(q){q.status='active';if(q.start>day(0))q.start=day(0);if(q.end<day(0))q.end=day(7)}render();return}
 if(a==='approveIdea'){let i=db.ideas.find(i=>i.id===id);if(!i)return;publishIdea(i);render();return}
 if(a==='rejectIdea'){let i=db.ideas.find(i=>i.id===id);if(i)i.status='rejected';render();return}
@@ -871,25 +883,12 @@ if(a==='hideIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='approved'
 if(a==='restoreIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='hidden'){const hits=findNG(i.text);i.ngHits=hits;if(hits.length){i.status='pending'}else{i.status='approved';let g=group(i.gid);if(g)g.hidden=false;}}render();return}
 if(a==='archive'){let q=survey(id);if(q){q.status='archived';q.archivedAt=new Date().toISOString()}render();return}
 if(a==='history'){let q=survey(id);if(!q)return;let li=db.ideas.filter(i=>i.sid===id&&i.status==='approved');popup(`<h3>アンケートの履歴</h3><div class="notice"><b>${safe(q.text)}</b><br>${safe(q.start)}〜${safe(q.end)}<br>承認済み ${li.length}件</div>${li.map(i=>`<div class="entry">${safe(i.text)}</div>`).join('')}`);return}
-if(a==='rename'){let g=group(id);popup(`<h3>グループ名の変更</h3><div class="field"><label>グループ名</label><input id="renameText" value="${safe(g.name)}"></div><div class="actions"><button class="btn primary" data-act="saveName" data-id="${id}">変更する</button></div>`);return}
-if(a==='saveName'){
- let g=group(id),name=$('#renameText')?.value.trim();if(!g||!name){$('#renameText')?.focus();return}
- const hits=findNG(name);
- if(hits.length){
-  db.pendingNames=db.pendingNames.filter(x=>x.gid!==g.id||x.legacy);
-  db.pendingNames.push({id:'pn'+(++seq),gid:g.id,name,ngHits:hits,legacy:false});
-  saveDemo();
-  popup(`<h3>グループ名を確認中です</h3><div class="notice">NGワードを検出したため、変更はまだ公開していません。現在の名前のまま職員確認待ちになります。</div><div class="actions"><button class="btn" data-act="board">ボードに戻る</button><button class="btn primary" data-act="manage">保留一覧へ</button></div>`);
- }else{g.name=name;close();render()}
- return
-}}
+}
 root.addEventListener('click',e=>{const a=e.target.closest('[data-act]');if(a){e.preventDefault();act(a.dataset.act,a.dataset.id);return}const r=e.target.closest('[data-role]');if(r){role=r.dataset.role;view='board';close();render();return}const t=e.target.closest('[data-tab]');if(t){tab=t.dataset.tab;render();return}});
 root.addEventListener('change',e=>{
  if(e.target.id==='demoAccount'){const next=e.target.value;if(demoAccounts.some(x=>x.id===next)){currentAccount=next;saveAccount();close();render()}return}
- if(e.target.id==='src'){selection=e.target.value;render();return}
- if(e.target.dataset.move){let i=db.ideas.find(x=>x.id===e.target.dataset.move);if(i){i.gid=e.target.value;render()}}
 });
-root.addEventListener('keydown',e=>{if(e.key==='Escape')close()});
+root.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='semanticQuery'){e.preventDefault();act('runSearch');return}if(e.key==='Escape')close()});
 render();
 if(typeof window!=='undefined'&&typeof window.setInterval==='function')window.setInterval(()=>{if(settleExpiredMissions()||expireSurveys())render()},60000);
 })();
