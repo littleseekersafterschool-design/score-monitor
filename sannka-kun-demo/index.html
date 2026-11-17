@@ -245,11 +245,22 @@ try{
  const old=JSON.parse(localStorage.getItem('sannka_demo_data_v3')||'null');
  if(old&&Array.isArray(old.surveys)&&Array.isArray(old.groups)&&Array.isArray(old.ideas)){
   db.surveys=old.surveys;db.groups=old.groups;db.ideas=old.ideas;db.islands=Array.isArray(old.islands)?old.islands:[];db.cubes=Array.isArray(old.cubes)?old.cubes:undefined;db.missions=Array.isArray(old.missions)?old.missions:undefined;db.pendingNames=Array.isArray(old.pendingNames)?old.pendingNames:[];db.pendingIslandNames=Array.isArray(old.pendingIslandNames)?old.pendingIslandNames:[];db.ngRulesVersion=old.ngRulesVersion;db.popMailVersion=old.popMailVersion;db.powerMissionVersion=old.powerMissionVersion;
-  const nums=[...db.surveys,...db.groups,...db.ideas,...db.islands,...(db.cubes||[]),...(db.missions||[]),...db.pendingNames,...db.pendingIslandNames].map(x=>Number((String(x.id||'').match(/\\d+$/)||[])[0])||0);
+  const nums=[...db.surveys,...db.groups,...db.ideas,...db.islands,...(db.cubes||[]),...(db.missions||[]),...db.pendingNames,...db.pendingIslandNames].map(x=>Number((String(x.id||'').match(/\d+$/)||[])[0])||0);
   seq=Math.max(seq,...nums);
  }
 }catch(e){}
+/* Repair duplicate idea IDs created by the old sequence-restoration bug. */
+let repairedIdeaIds=false;
+const seenIdeaIds=new Set();
+for(const idea of db.ideas){
+ if(!idea.id||seenIdeaIds.has(idea.id)){
+  idea.id='i'+(++seq);
+  repairedIdeaIds=true;
+ }
+ seenIdeaIds.add(idea.id);
+}
 function saveDemo(){try{localStorage.setItem('sannka_demo_data_v3',JSON.stringify(db))}catch(e){}}
+if(repairedIdeaIds)saveDemo();
 function groupCount(gid){return db.ideas.filter(i=>i.gid===gid&&i.status==='approved').length}
 if(!Array.isArray(db.islands))db.islands=[];
 function islandFor(groupId){return db.islands.find(i=>i.members.includes(groupId))}
@@ -875,8 +886,8 @@ if(a==='restoreCube'){
 if(a==='like'){let g=group(id);if(!g)return;const adding=!liked.has(id);g.likes+=adding?1:-1;adding?liked.add(id):liked.delete(id);render();act('detail',id);if(adding)fxReact($('#dialog [data-act="like"]')||$('[data-act="detail"][data-id="'+id+'"]'));return}
 if(a==='rejectSurvey'){let q=survey(id);if(q){q.status='rejected';render()}return}
 if(a==='approveSurvey'){let q=survey(id);if(q){q.status='active';if(q.start>day(0))q.start=day(0);if(q.end<day(0))q.end=day(7)}render();return}
-if(a==='approveIdea'){let i=db.ideas.find(i=>i.id===id);if(!i)return;publishIdea(i);render();return}
-if(a==='rejectIdea'){let i=db.ideas.find(i=>i.id===id);if(i)i.status='rejected';render();return}
+if(a==='approveIdea'){let i=db.ideas.find(i=>i.id===id&&i.status==='pending');if(!i)return;publishIdea(i);render();return}
+if(a==='rejectIdea'){let i=db.ideas.find(i=>i.id===id&&i.status==='pending');if(i)i.status='rejected';render();return}
 if(a==='addNGWord'){let word=$('#addNGWord')?.value.trim();if(!word)return;const target=normalized(word);if(!target||[...defaultNG,...facilityNG].some(x=>normalized(x)===target)){alert('同じNGワードが登録されています');return}facilityNG.push(word.slice(0,30));saveNG();scanExistingText();cubeSanitizeExisting();render();return}
 if(a==='removeNGWord'){let ix=Number(id);if(Number.isInteger(ix)&&ix>=0&&ix<facilityNG.length){facilityNG.splice(ix,1);saveNG();render()}return}
 if(a==='hideIdea'){let i=db.ideas.find(i=>i.id===id);if(i&&i.status==='approved'){i.status='hidden';let g=group(i.gid);if(g&&!db.ideas.some(x=>x.gid===g.id&&x.status==='approved'))g.hidden=true;}render();return}
