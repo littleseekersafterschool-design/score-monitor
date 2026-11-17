@@ -49,16 +49,16 @@
 #sk4 .island{border-color:#83c3e6;background:rgba(255,255,255,.74);box-shadow:0 5px 15px rgba(56,139,210,.08)}
 #sk4 .island-label{border-color:#b2d9ee;color:#146797;box-shadow:0 2px 10px rgba(62,128,197,.12)}
 #sk4 .qnode{background:linear-gradient(135deg,#22a8d0,#117ead);box-shadow:0 4px 11px rgba(14,127,189,.19)}
-/* Survey question: compact icon + visible question above each island */
-#sk4 .survey-head{flex:0 0 100%;display:flex;align-items:center;justify-content:center;gap:9px;margin:0 0 5px;order:-1}
-#sk4 .qnode.survey-icon{width:42px;height:42px;min-width:42px;border-radius:14px;gap:0;font-size:9px;line-height:1;box-shadow:0 4px 11px rgba(14,127,189,.18)}
-#sk4 .qnode.survey-icon b{font-size:16px;line-height:1}
-#sk4 .qnode.survey-icon span{font-size:9px;font-weight:900;line-height:1.15}
-#sk4 .survey-question{min-width:0;max-width:calc(100% - 54px);border:1px solid #b5daed;background:rgba(255,255,255,.92);color:#174f72;border-radius:16px;padding:8px 13px;text-align:left;box-shadow:0 3px 10px rgba(46,125,177,.10);transition:transform .18s,border-color .18s,box-shadow .18s}
-#sk4 .survey-question small{display:block;color:#4281a6;font-size:9px;font-weight:800;letter-spacing:.05em}
-#sk4 .survey-question strong{display:block;font-size:14px;line-height:1.4;letter-spacing:.01em}
-#sk4 .survey-question:hover{transform:translateY(-1px);border-color:#70b8dd;box-shadow:0 5px 14px rgba(46,125,177,.15)}
-@media(max-width:530px){#sk4 .survey-head{justify-content:flex-start}#sk4 .survey-question{flex:1;max-width:none}#sk4 .survey-question strong{font-size:13px}}
+/* Survey question: always-visible, compact label inspired by the reference board UI */
+#sk4 .survey-head{flex:0 0 100%;display:flex;align-items:center;justify-content:flex-start;gap:7px;margin:-2px 0 7px;order:-1;min-width:0}
+#sk4 .survey-question{display:flex;align-items:center;gap:5px;min-width:0;max-width:calc(100% - 92px);border:1px solid #a9d3eb;background:rgba(239,249,255,.96);color:#174f72;border-radius:10px;padding:4px 9px 4px 5px;box-shadow:0 2px 7px rgba(46,125,177,.08)}
+#sk4 .survey-mini-icon{width:27px;height:27px;min-width:27px;border-radius:8px;background:linear-gradient(135deg,#22a8d0,#117ead);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:1px;font-size:10px;font-weight:900;line-height:1}
+#sk4 .survey-mini-icon b{font-size:8px;line-height:1}
+#sk4 .survey-question small{display:inline;color:#4281a6;font-size:9px;font-weight:850;letter-spacing:.03em;white-space:nowrap}
+#sk4 .survey-question strong{display:block;min-width:0;font-size:12px;line-height:1.35;letter-spacing:.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sk4 .survey-answer{border:1px solid #b5d6e8;background:#fff;color:#1e739f;border-radius:999px;padding:6px 9px;font-size:9px;font-weight:850;white-space:nowrap;transition:background .18s,border-color .18s,transform .18s}
+#sk4 .survey-answer:hover{background:#eaf7ff;border-color:#75badd;transform:translateY(-1px)}
+@media(max-width:530px){#sk4 .survey-head{align-items:flex-start;flex-wrap:wrap}#sk4 .survey-question{flex:1;max-width:none}#sk4 .survey-question strong{font-size:11px;white-space:normal}#sk4 .survey-answer{margin-left:34px}}
 
 #sk4 .bubble{position:relative;isolation:isolate;overflow:hidden;border-color:var(--line);background:radial-gradient(circle at 29% 19%,rgba(255,255,255,.94),rgba(255,255,255,.33) 24%,transparent 53%),var(--bg);box-shadow:inset 5px 7px 12px rgba(255,255,255,.42),inset -9px -10px 17px rgba(12,88,159,.13),0 7px 16px rgba(40,123,190,.15);animation:skFloat 5.7s ease-in-out infinite}
 #sk4 .bubble::before{content:"";position:absolute;left:19%;top:13%;width:37%;height:14%;background:rgba(255,255,255,.58);border-radius:60%;transform:rotate(-30deg);pointer-events:none;z-index:-1}
@@ -504,7 +504,7 @@ let tip=q?'アンケート '+q.label+'｜'+q.text:'自由に発意する';
 let head;
 if(q){
  const answerLabel='アンケート '+q.label+'に答える：'+q.text;
- head='<div class="survey-head"><button class="qnode survey-icon" title="'+safe(tip)+'" aria-label="'+safe(answerLabel)+'" data-act="answer" data-id="'+safe(q.id)+'"><b aria-hidden="true">▤</b><span>'+safe(q.label)+'</span></button><button class="survey-question" title="'+safe(tip)+'" aria-label="'+safe(answerLabel)+'" data-act="answer" data-id="'+safe(q.id)+'"><small>みんなへの質問</small><strong>'+safe(q.text)+'</strong></button></div>';
+ head='<div class="survey-head"><div class="survey-question" title="'+safe(q.text)+'" aria-label="'+safe('問いかけ：'+q.text)+'"><span class="survey-mini-icon" aria-hidden="true">▤<b>'+safe(q.label)+'</b></span><small>問いかけ：</small><strong>'+safe(q.text)+'</strong></div><button class="survey-answer" title="'+safe(tip)+'" aria-label="'+safe(answerLabel)+'" data-act="answer" data-id="'+safe(q.id)+'">＋ こたえる</button></div>';
 }else{
  head='<button class="qnode free-icon" title="'+safe(tip)+'" data-act="free"><b aria-hidden="true">✦</b>自由な発意</button>';
 }
